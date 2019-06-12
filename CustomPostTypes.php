@@ -1,12 +1,12 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * Add Custom Post Types
  *
  * @name CustomPostTypes
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class CustomPostTypes
 {

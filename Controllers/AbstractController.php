@@ -1,5 +1,5 @@
 <?php
-namespace App\Core\Controllers;
+namespace Undefined\Core\Controllers;
 
 use Timber;
 
@@ -8,7 +8,7 @@ use Timber;
  *
  * @name AbstractController
  * @since 1.0.0
- * @package App\Core\Controllers
+ * @package Undefined\Core\Controllers
  */
 class AbstractController
 {

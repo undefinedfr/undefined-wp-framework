@@ -1,12 +1,12 @@
 <?php
-namespace App\Core\Helpers;
+namespace Undefined\Core\Helpers;
 
 /**
  * User Helper
  *
  * @name UserHelper
  * @since 1.0.0
- * @package App\Core\Helpers
+ * @package Undefined\Core\Helpers
  */
 class UserHelper
 {

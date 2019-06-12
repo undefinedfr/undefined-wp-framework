@@ -1,14 +1,14 @@
 <?php
 // TODO : Add security restrictions
 
-namespace App\Core\Security;
+namespace Undefined\Core\Security;
 
 /**
  * Security Actions
  *
  * @name Security
  * @since 1.0.0
- * @package App\Core\Security
+ * @package Undefined\Core\Security
  */
 class Security
 {

@@ -1,14 +1,14 @@
 <?php
 // TODO : Dynamic Image Sizes
 
-namespace App\Core\Images;
+namespace Undefined\Core\Images;
 
 /**
  * Image Helper
  *
  * @name Image
  * @since 1.0.0
- * @package App\Core\Images
+ * @package Undefined\Core\Images
  */
 class Image
 {

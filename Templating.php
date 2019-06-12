@@ -1,12 +1,12 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * Templating
  *
  * @name Templating
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class Templating
 {

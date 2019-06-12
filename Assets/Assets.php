@@ -1,12 +1,12 @@
 <?php
-namespace App\Core\Assets;
+namespace Undefined\Core\Assets;
 
 /**
  * Add Scripts and Styles
  *
  * @name Assets
  * @since 1.0.0
- * @package App\Core\Assets
+ * @package Undefined\Core\Assets
  */
 class Assets
 {

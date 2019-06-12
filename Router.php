@@ -1,9 +1,9 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * @name Router
- * @package App\Core
+ * @package Undefined\Core
  * @since 1.0.0
  */
 class Router

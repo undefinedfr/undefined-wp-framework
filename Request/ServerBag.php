@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Core\Request;
+namespace Undefined\Core\Request;
 
 /**
  * @name ServerBag
- * @package App\Core\Request
+ * @package Undefined\Core\Request
  */
 class ServerBag extends ParameterBag
 {

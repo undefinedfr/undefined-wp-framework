@@ -1,12 +1,12 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * Set Filters hook
  *
  * @name Filters
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class Filters
 {

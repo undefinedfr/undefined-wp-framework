@@ -1,5 +1,5 @@
 <?php
-namespace App\Core\Mails;
+namespace Undefined\Core\Mails;
 
 /**
  * Mail Helper
@@ -7,7 +7,7 @@ namespace App\Core\Mails;
  * @doc https://github.com/anthonybudd/WP_Mail
  * @name Mail
  * @since 1.0.0
- * @package App\Core\Mails
+ * @package Undefined\Core\Mails
  */
 class Mail {
 

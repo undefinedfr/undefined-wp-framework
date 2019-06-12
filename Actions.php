@@ -1,12 +1,12 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * Set Actions hook
  *
  * @name Actions
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class Actions
 {

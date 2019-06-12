@@ -1,12 +1,12 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * Set Ajax Function
  *
  * @name Ajax
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class Ajax
 {

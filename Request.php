@@ -1,10 +1,10 @@
 <?php
-namespace App\Core;
+namespace Undefined\Core;
 
 /**
  * @name Request
  * @since 1.0.0
- * @package App\Core
+ * @package Undefined\Core
  */
 class Request
 {
