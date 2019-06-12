@@ -4,6 +4,9 @@
   "type": "wordpress-boilerplate",
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
+  "require": {
+    "timber/timber": ">=1.9"
+  },
   "autoload" : {
     "psr-4" : {
       "Undefined\\Core\\" : "src/"
