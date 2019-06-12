@@ -8,5 +8,13 @@
     "psr-4" : {
       "Undefined\\Core\\" : "src/"
     }
-  }
+  },
+  "authors": [
+    {
+      "name": "Nicolas RIVIERE",
+      "email": "hello@undefined.fr",
+      "homepage": "http://undefined.fr",
+      "role": "Lead Developer"
+    }
+  ]
 }
