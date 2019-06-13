@@ -58,7 +58,8 @@ class AbstractController
      * @param $route
      * @return bool
      */
-    public function isCurrentRoute($route) {
+    public function isCurrentRoute($route)
+    {
         return $route == ($this->getName() . '/' . $this->getSection());
     }
 
@@ -67,7 +68,8 @@ class AbstractController
      *
      * @return mixed
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->_controllerName;
     }
 
@@ -76,7 +78,8 @@ class AbstractController
      *
      * @return mixed
      */
-    public function getSection() {
+    public function getSection()
+    {
         return $this->_section;
     }
 
@@ -85,7 +88,8 @@ class AbstractController
      *
      * @return mixed
      */
-    public function getAction() {
+    public function getAction()
+    {
         return $this->_action;
     }
 
@@ -94,14 +98,16 @@ class AbstractController
      *
      * @return array
      */
-    public function getNotices() {
+    public function getNotices()
+    {
         return !empty($_SESSION['app']['notices']) ? $_SESSION['app']['notices'] : [];
     }
 
     /**
      * Unset Session Notices
      */
-    public function unsetNotices() {
+    public function unsetNotices()
+    {
         unset($_SESSION['app']['notices']);
     }
 
@@ -109,7 +115,8 @@ class AbstractController
      * Set Wp Title
      * @return mixed
      */
-    public function setCustomWpTitle(){
+    public function setCustomWpTitle()
+    {
         return $this->_title;
     }
 
@@ -118,7 +125,8 @@ class AbstractController
      *
      * @param null $section
      */
-    protected function _setSection($section = null) {
+    protected function _setSection($section = null)
+    {
         $this->_section = $section;
     }
 
@@ -127,7 +135,8 @@ class AbstractController
      *
      * @param null $action
      */
-    protected function _setAction() {
+    protected function _setAction()
+    {
         $formatedSection = str_replace('-', '', $this->_section);
         $lastSection = explode('/', $formatedSection);
         $this->_action = !empty($this->_section) ? array_pop($lastSection) : 'index';
@@ -138,7 +147,8 @@ class AbstractController
      *
      * @param null $controllerName
      */
-    protected function _setName() {
+    protected function _setName()
+    {
         $this->_controllerName = strtolower(preg_replace('#([a-zA-Z0-9]{1,})Controller$#', '$1' , get_class($this)));
     }
 
@@ -147,7 +157,8 @@ class AbstractController
      *
      * @param null $controllerName
      */
-    protected function _setTitle($title) {
+    protected function _setTitle($title)
+    {
         $this->_title = \ProjectFunctions::getTranslation($title, DOMAIN_LANG);
     }
 
@@ -156,7 +167,8 @@ class AbstractController
      *
      * @param $url
      */
-    protected function _redirect($url = null) {
+    protected function _redirect($url = null)
+    {
         wp_redirect($this->getUrl($url));
         exit;
     }
@@ -166,7 +178,8 @@ class AbstractController
      *
      * @param $url
      */
-    public function getUrl($url = null) {
+    public function getUrl($url = null)
+    {
         return !preg_match('#^(http|https):#', $url) ? get_site_url(null, $url) : $url;
     }
 
@@ -177,7 +190,8 @@ class AbstractController
      * @param null $message
      * @param bool $dismissible
      */
-    protected function _addNotice($type = 'success', $message = null, $dismissible = false, $auto_dismissible = false) {
+    protected function _addNotice($type = 'success', $message = null, $dismissible = false, $auto_dismissible = false)
+    {
         if(empty($_SESSION['app']['notices']))
             $_SESSION['app']['notices'] = [];
         $_SESSION['app']['notices'][] = [
@@ -191,7 +205,8 @@ class AbstractController
     /**
      * Set Timber context
      */
-    protected function _setContext() {
+    protected function _setContext()
+    {
 
         $this->context['id'] = $this->_action;
 
@@ -212,7 +227,8 @@ class AbstractController
      * Set data to Timber context
      * @param array $data
      */
-    protected function _setData($data = []) {
+    protected function _setData($data = [])
+    {
 
         $this->data = $data;
     }
@@ -220,9 +236,38 @@ class AbstractController
     /**
      * Render Timber views
      */
-    private function _render() {
+    private function _render()
+    {
+        $templates = [];
+        $template_name = $this->_controllerName;
 
-        Timber::render( $this->_action . ((!empty($this->_section) && $this->_section != 'index') ? '-' . $this->_section : '') . '.twig', $this->context );
+        // Action
+        if((!empty($this->_action) && $this->_action != 'index')){
+            $template_name .= '-' . $this->_action;
+        }
+        // Sub section
+        if((!empty($this->_section) && $this->_section != 'index')){
+            $template_name .= '-' . $this->_section;
+        }
+
+        $post = !empty($this->context['post']) ? $this->context['post'] : false;
+
+        // Custom post_type
+        if(!empty($post) && $this->_controllerName == 'single'){
+            $templates[] = $template_name . '-' . $post->ID . '.twig';
+            $templates[] = $template_name . '-' . $post->post_type . '.twig';
+        }
+
+        $templates[] = $template_name . '.twig';
+
+        // Protected posts
+        if(!empty($post) && post_password_required( $post->ID )){
+            foreach($templates as &$template){
+                $template = str_replace('.twig', '-password.twig', $template);
+            }
+        }
+
+        Timber::render( $templates, $this->context );
     }
 
     /**
@@ -230,45 +275,45 @@ class AbstractController
      * @param array $keys
      * @return array|mixed
      */
-    private function _getOptions($keys = []) {
+    private function _getOptions($keys = [])
+    {
         $prefixLang = '';
         if(defined('ICL_LANGUAGE_CODE')) {
             global $sitepress;
             $prefixLang = (ICL_LANGUAGE_CODE != $sitepress->get_default_language() ? ICL_LANGUAGE_CODE . '_' : '');
         }
 
-       if(false === ( $meta = get_transient( 'value' ) )) {
+        if(false === ( $meta = get_transient( 'value' ) )) {
 
-           // Globals.
-           global $wpdb;
+            // Globals.
+            global $wpdb;
 
-           // Vars.
-           $meta = [];
-           $query = "SELECT * FROM $wpdb->options WHERE 1 = 1 AND (";
-           foreach ($keys as $index => $key) {
-               $meta[$key] = false;
-               $query .= $index > 0 ? ' OR ' : '';
-               $query .= $wpdb->prepare("option_name = %s", $key);
-               $query .= $wpdb->prepare("OR option_name LIKE '%s'", 'options_' . $prefixLang . '%' . $key);
-           }
-           $query .= ")";
-
-
-           // Query database for results.
-           $rows = $wpdb->get_results($query, ARRAY_A);
+            // Vars.
+            $meta = [];
+            $query = "SELECT * FROM $wpdb->options WHERE 1 = 1 AND (";
+            foreach ($keys as $index => $key) {
+                $meta[$key] = false;
+                $query .= $index > 0 ? ' OR ' : '';
+                $query .= $wpdb->prepare("option_name = %s", $key);
+                $query .= $wpdb->prepare("OR option_name LIKE '%s'", 'options_' . $prefixLang . '%' . $key);
+            }
+            $query .= ")";
 
 
-           foreach ($rows as $row) {
-               if (empty($meta[$row['option_name']]))
-                   $meta[preg_replace('#options_' . $prefixLang . '(.?)#', '$1', $row['option_name'])] = $row['option_value'];
-           }
+            // Query database for results.
+            $rows = $wpdb->get_results($query, ARRAY_A);
 
-           set_transient($prefixLang . 'options_cache', $meta, HOUR_IN_SECONDS);
+
+            foreach ($rows as $row) {
+                if (empty($meta[$row['option_name']]))
+                    $meta[preg_replace('#options_' . $prefixLang . '(.?)#', '$1', $row['option_name'])] = $row['option_value'];
+            }
+
+            set_transient($prefixLang . 'options_cache', $meta, HOUR_IN_SECONDS);
 
         }
-        
+
         return $meta;
     }
 
 }
-
