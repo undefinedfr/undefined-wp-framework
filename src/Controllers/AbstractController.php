@@ -258,6 +258,12 @@ class AbstractController
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
+        // Page template
+        if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
+            $template = rtrim(get_page_template_slug(), '.php');
+            $templates[] = $template_name . '-' . $template . '.twig';
+        }
+
         $templates[] = $template_name . '.twig';
 
         // Protected posts
@@ -266,7 +272,7 @@ class AbstractController
                 $template = str_replace('.twig', '-password.twig', $template);
             }
         }
-
+        
         Timber::render( $templates, $this->context );
     }
 
