@@ -1,6 +1,8 @@
 <?php
 namespace Undefined\Core;
 
+use Undefined\Core\Helpers\HookHelper;
+
 /**
  * Set Filters hook
  *
@@ -8,19 +10,13 @@ namespace Undefined\Core;
  * @since 1.0.0
  * @package Undefined\Core
  */
-class Filters
+class Filters extends HookHelper
 {
     protected $_hooks = [];
 
     public function __construct()
     {
-        foreach($this->_hooks as $functionName => $hook){
-            if(is_array($hook)){
-                add_filter($hook['hook'], array(&$this, 'theme_' . $functionName), $hook['priority'], $hook['accepted_args']);
-            } else {
-                add_filter($hook, array(&$this, 'theme_' . $functionName));
-            }
-        }
+        $this->setFiltersList($this, $this->_hooks);
     }
 
     /**

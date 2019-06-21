@@ -1,6 +1,8 @@
 <?php
 namespace Undefined\Core;
 
+use Undefined\Core\Helpers\HookHelper;
+
 /**
  * Set Actions hook
  *
@@ -8,19 +10,13 @@ namespace Undefined\Core;
  * @since 1.0.0
  * @package Undefined\Core
  */
-class Actions
+class Actions extends HookHelper
 {
     protected $_hooks = [];
 
     public function __construct()
     {
-        foreach($this->_hooks as $functionName => $hook){
-            if(is_array($hook)){
-                add_action($hook['hook'], array(&$this, 'theme_' . $functionName), $hook['priority'], $hook['accepted_args']);
-            } else {
-                add_action($hook, array(&$this, 'theme_' . $functionName));
-            }
-        }
+        $this->setFiltersList($this, $this->_hooks);
     }
 
     /**
