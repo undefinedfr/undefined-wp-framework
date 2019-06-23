@@ -29,7 +29,7 @@ class HookHelper
      * @param $class
      * @param $hooks
      */
-    protected function setActionList($class, $hooks){
+    protected function setActionsList($class, $hooks){
         foreach($hooks as $functionName => $hook){
             if(is_array($hook)){
                 add_action($hook['hook'], [&$class, 'theme_' . $functionName], $hook['priority'], $hook['accepted_args']);

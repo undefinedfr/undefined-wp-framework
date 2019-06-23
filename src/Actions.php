@@ -16,7 +16,7 @@ class Actions extends HookHelper
 
     public function __construct()
     {
-        $this->setFiltersList($this, $this->_hooks);
+        $this->setActionsList($this, $this->_hooks);
     }
 
     /**
