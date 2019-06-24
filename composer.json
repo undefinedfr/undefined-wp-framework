@@ -1,6 +1,6 @@
 {
   "name":"undefinedfr/undefined-wp-framework",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "wordpress-boilerplate",
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
@@ -10,6 +10,9 @@
   "autoload" : {
     "files": [
       "src/Functions.php"
+    ],
+    "exclude-from-classmap" : [
+      "src/Plugins/"
     ],
     "psr-4" : {
       "Undefined\\Core\\" : "src/"
