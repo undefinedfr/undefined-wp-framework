@@ -54,6 +54,7 @@ class Assets
             'template_url' => get_template_directory_uri() . 'tpl',
             'ip' => $_SERVER['REMOTE_ADDR'],
             'admin_user' => current_user_can('administrator'),
+            'ajax_nonce' => wp_create_nonce('undefined_ajax_nonce'),
         );
 
         add_action( 'wp_enqueue_scripts', array(&$this, 'app_scripts_init') );
