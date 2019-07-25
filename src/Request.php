@@ -27,6 +27,10 @@ class Request
     /**
      * Headers (taken from the $_SERVER).
      */
+    public $session;
+    /**
+     * Sessions (taken from the $_SESSION).
+     */
     public $headers;
     /**
      * @var string|resource|false|null
@@ -46,9 +50,9 @@ class Request
     protected $format;
 
 
-    public function __construct(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
+    public function __construct(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null, $session = [])
     {
-        $this->initialize($query, $request, $attributes, $cookies, $files, $server, $content);
+        $this->initialize($query, $request, $attributes, $cookies, $files, $server, $content, $session);
     }
 
     /**
@@ -63,14 +67,16 @@ class Request
      * @param array                $files      The FILES parameters
      * @param array                $server     The SERVER parameters
      * @param string|resource|null $content    The raw body data
+     * @param array                $server     The SESSION parameters
      */
-    public function initialize(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
+    public function initialize(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null, $session = [])
     {
         $this->request = new Request\ParameterBag($request);
         $this->query = new Request\ParameterBag($query);
         $this->attributes = new Request\ParameterBag($attributes);
         $this->cookies = new Request\ParameterBag($cookies);
         $this->server = new Request\ServerBag($server);
+        $this->session = new Request\ServerBag($session);
         $this->headers = new Request\HeaderBag($this->server->getHeaders());
         $this->content = $content;
         $this->languages = null;
@@ -92,7 +98,7 @@ class Request
      */
     public static function createFromGlobals()
     {
-        $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER);
+        $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER, null, $_SESSION);
         if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
             && \in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), array('PUT', 'DELETE', 'PATCH'))
         ) {
@@ -125,6 +131,9 @@ class Request
             return $result;
         }
         if ($this !== $result = $this->request->get($key, $this)) {
+            return $result;
+        }
+        if ($this !== $result = $this->session->get($key, $this)) {
             return $result;
         }
         return $default;
@@ -416,7 +425,7 @@ class Request
         }
         $server['REQUEST_URI'] = $components['path'].('' !== $queryString ? '?'.$queryString : '');
         $server['QUERY_STRING'] = $queryString;
-        return self::createRequestFromFactory($query, $request, array(), $cookies, $files, $server, $content);
+        return self::createRequestFromFactory($query, $request, array(), $cookies, $files, $server, $content, $_SESSION);
     }
 
     /**
@@ -464,9 +473,9 @@ class Request
     }
 
 
-    private static function createRequestFromFactory(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
+    private static function createRequestFromFactory(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null, $session = [])
     {
-        return new static($query, $request, $attributes, $cookies, $files, $server, $content);
+        return new static($query, $request, $attributes, $cookies, $files, $server, $content, $session);
     }
 }
 

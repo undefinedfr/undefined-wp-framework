@@ -17,10 +17,12 @@ class HookHelper
      */
     protected function setFiltersList($class, $hooks){
         foreach($hooks as $functionName => $hook){
-            if(is_array($hook)){
-                add_filter($hook['hook'], [&$class, 'theme_' . $functionName], $hook['priority'], $hook['accepted_args']);
-            } else {
-                add_filter($hook, [&$class, 'theme_' . $functionName]);
+            if(empty($hook['remove_on_admin']) || !is_admin()){
+                if(is_array($hook)){
+                    add_filter($hook['hook'], [&$class, 'theme_' . $functionName], $hook['priority'], $hook['accepted_args']);
+                } else {
+                    add_filter($hook, [&$class, 'theme_' . $functionName]);
+                }
             }
         }
     }
@@ -31,10 +33,12 @@ class HookHelper
      */
     protected function setActionsList($class, $hooks){
         foreach($hooks as $functionName => $hook){
-            if(is_array($hook)){
-                add_action($hook['hook'], [&$class, 'theme_' . $functionName], $hook['priority'], $hook['accepted_args']);
-            } else {
-                add_action($hook, [&$class, 'theme_' . $functionName]);
+            if(empty($hook['remove_on_admin']) || !is_admin()){
+                if(is_array($hook)){
+                    add_action($hook['hook'], [&$class, 'theme_' . $functionName], $hook['priority'], $hook['accepted_args']);
+                } else {
+                    add_action($hook, [&$class, 'theme_' . $functionName]);
+                }
             }
         }
     }

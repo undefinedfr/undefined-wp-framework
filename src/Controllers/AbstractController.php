@@ -28,6 +28,7 @@ class AbstractController
                 'notices' => []
             ];
         }
+
         $this->_setName();
         $this->_setSection($section);
         $this->_setAction();
@@ -47,9 +48,6 @@ class AbstractController
         $this->context              = Timber::context();
         $this->context['menu']      = new Timber\Menu();
         $this->context['options']   = $this->_getOptions(apply_filters('timber_default_options', $this->_options));
-        $this->_setContext();
-
-        $this->_render();
     }
 
     /**
@@ -121,6 +119,26 @@ class AbstractController
     }
 
     /**
+     * Get url
+     *
+     * @param $url
+     */
+    public function getUrl($url = null)
+    {
+        return !preg_match('#^(http|https):#', $url) ? get_site_url(null, $url) : $url;
+    }
+
+    /**
+     * Render Timber views
+     */
+    public function render()
+    {
+        $this->_setContext();
+
+        $this->_render();
+    }
+
+    /**
      * Set section
      *
      * @param null $section
@@ -174,16 +192,6 @@ class AbstractController
     }
 
     /**
-     * Get url
-     *
-     * @param $url
-     */
-    public function getUrl($url = null)
-    {
-        return !preg_match('#^(http|https):#', $url) ? get_site_url(null, $url) : $url;
-    }
-
-    /**
      * Add Notice
      *
      * @param string $type
@@ -194,6 +202,7 @@ class AbstractController
     {
         if(empty($_SESSION['app']['notices']))
             $_SESSION['app']['notices'] = [];
+
         $_SESSION['app']['notices'][] = [
             'type' => $type,
             'message' => \ProjectFunctions::getTranslation($message, DOMAIN_LANG),
@@ -207,7 +216,6 @@ class AbstractController
      */
     protected function _setContext()
     {
-
         $this->context['id'] = $this->_action;
 
         if( is_single() ){
@@ -229,14 +237,13 @@ class AbstractController
      */
     protected function _setData($data = [])
     {
-
         $this->data = $data;
     }
 
     /**
      * Render Timber views
      */
-    private function _render()
+    protected function _render()
     {
         $templates = [];
         $template_name = $this->_controllerName;
@@ -258,6 +265,14 @@ class AbstractController
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
+
+        $posts = !empty($this->context['posts']) ? $this->context['posts'] : false;
+        // Custom post_type list
+        if(!empty($posts) && ($this->_controllerName == 'list' || $this->_controllerName == 'archive')){
+            $templates[] = $template_name . '-' . get_post_type() . '.twig';
+            $templates[] = 'archive.twig';
+        }
+
         // Page template
         if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
             $template = rtrim(get_page_template_slug(), '.php');
@@ -272,7 +287,7 @@ class AbstractController
                 $template = str_replace('.twig', '-password.twig', $template);
             }
         }
-        
+
         Timber::render( $templates, $this->context );
     }
 
