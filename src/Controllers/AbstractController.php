@@ -235,9 +235,9 @@ class AbstractController
      * Set data to Timber context
      * @param array $data
      */
-    protected function _setData($data = [])
+    protected function _setData($data = [], $merge = true)
     {
-        $this->data = $data;
+        $this->data = !$merge ? $data : array_merge($this->data, $data);
     }
 
     /**
@@ -271,6 +271,7 @@ class AbstractController
         if(is_archive()){
             $queried_o = get_queried_object();
             $this->context['post_type'] = $queried_o->name;
+            $templates[] = 'archive-' . $queried_o->name . '.twig';
             $templates[] = $template_name . '-' . $queried_o->name . '.twig';
             $templates[] = 'archive.twig';
         }
