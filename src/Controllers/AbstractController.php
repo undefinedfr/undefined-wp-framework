@@ -44,10 +44,6 @@ class AbstractController
 
         add_action( 'wp_title', [$this, 'setCustomWpTitle']);
         add_action( 'shutdown', [$this, 'unsetNotices']);
-
-        $this->context              = Timber::context();
-        $this->context['menu']      = new Timber\Menu();
-        $this->context['options']   = $this->_getOptions(apply_filters('timber_default_options', $this->_options));
     }
 
     /**
@@ -133,6 +129,10 @@ class AbstractController
      */
     public function render()
     {
+        $this->context              = Timber::context();
+        $this->context['menu']      = new Timber\Menu();
+        $this->context['options']   = $this->_getOptions(apply_filters('timber_default_options', $this->_options));
+
         $this->_setContext();
 
         $this->_render();
@@ -261,15 +261,17 @@ class AbstractController
 
         // Custom post_type
         if(!empty($post) && $this->_controllerName == 'single'){
+            $this->context['post_type'] = $post->post_type;
             $templates[] = $template_name . '-' . $post->ID . '.twig';
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
 
-        $posts = !empty($this->context['posts']) ? $this->context['posts'] : false;
         // Custom post_type list
-        if(!empty($posts) && ($this->_controllerName == 'list' || $this->_controllerName == 'archive')){
-            $templates[] = $template_name . '-' . get_post_type() . '.twig';
+        if(is_archive()){
+            $queried_o = get_queried_object();
+            $this->context['post_type'] = $queried_o->name;
+            $templates[] = $template_name . '-' . $queried_o->name . '.twig';
             $templates[] = 'archive.twig';
         }
 
