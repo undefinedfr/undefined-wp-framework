@@ -20,6 +20,7 @@ class AbstractController
     protected   $_section;
     protected   $_title;
     protected   $_controllerName;
+    protected   $_queriedObject;
 
     public function __construct($section = null)
     {
@@ -32,6 +33,8 @@ class AbstractController
         $this->_setName();
         $this->_setSection($section);
         $this->_setAction();
+
+        $this->_queriedObject = get_queried_object();
 
         $actionName = $this->_action;
         if(!empty($_POST) && method_exists($this, $actionName . 'PostAction')){
@@ -127,13 +130,13 @@ class AbstractController
     /**
      * Render Timber views
      */
-    public function render()
+    public function render($data = [])
     {
         $this->context              = Timber::context();
         $this->context['menu']      = new Timber\Menu();
         $this->context['options']   = $this->_getOptions(apply_filters('timber_default_options', $this->_options));
 
-        $this->_setContext();
+        $this->_setContext($data);
 
         $this->_render();
     }
@@ -214,7 +217,7 @@ class AbstractController
     /**
      * Set Timber context
      */
-    protected function _setContext()
+    protected function _setContext($data = [])
     {
         $this->context['id'] = $this->_action;
 
@@ -229,6 +232,9 @@ class AbstractController
         }
 
         $this->context = array_merge( $this->context, apply_filters('timber_global_context_data', $this->data) );
+
+        $this->context = array_merge($data, $this->context);
+
     }
 
     /**
@@ -266,15 +272,23 @@ class AbstractController
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
-
         // Custom post_type list
-        if(is_archive()){
-            $queried_o = get_queried_object();
-            $this->context['post_type'] = $queried_o->name;
-            $templates[] = 'archive-' . $queried_o->name . '.twig';
-            $templates[] = $template_name . '-' . $queried_o->name . '.twig';
+        if(is_archive() && !is_tax()){
+            $this->context['post_type'] = $this->_queriedObject->name;
+            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
+            $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
+
+        // Custom taxonomy template
+        if(is_tax()){
+            $this->context['taxonomy'] = $this->_queriedObject->taxonomy;
+            $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
+            $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '.twig';
+            $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
+            $templates[] = 'taxonomy.twig';
+        }
+
 
         // Page template
         if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
