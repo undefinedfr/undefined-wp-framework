@@ -45,8 +45,8 @@ class CustomPostTypes
             if(!isset($pt['pluriel'])) $pt['pluriel'] = $idpt;
             if(!isset($pt['singulier'])) $pt['singulier'] = $idpt;
             if(!isset($pt['feminin'])) $pt['feminin'] = 0;
-            if(!isset($pt['supports'])) $pt['supports'] = array('title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes');
-            if(!isset($pt['taxonomies'])) $pt['taxonomies'] = array('post_tag','category');
+            if(!isset($pt['supports'])) $pt['supports'] = ['title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'];
+            if(!isset($pt['taxonomies'])) $pt['taxonomies'] = ['post_tag','category'];
             $rewrite = (isset($pt['rewrite'])) ? $pt['rewrite'] : $idpt;
 
             $fem_single = ($pt['feminin'] ? 'e':'');
@@ -54,7 +54,7 @@ class CustomPostTypes
             $new_single = 'nouve'.($pt['feminin'] ? 'lle':'au');
             $no_single = 'aucun'.$fem_single;
 
-            $_PT_PARAMS = array(
+            $_PT_PARAMS = [
                 'label' => ucfirst($pt['pluriel']),
                 'singular_label' => ucfirst($pt['singulier']),
                 'description' => '',
@@ -69,9 +69,9 @@ class CustomPostTypes
                 'hierarchical' => !empty($pt['hierarchical']),
                 'query_var' => true,
                 'has_archive' => is_array($rewrite) ? $idpt : $rewrite,
-                'rewrite' => is_array($rewrite) ? $rewrite : array('slug' => $rewrite),
+                'rewrite' => is_array($rewrite) ? $rewrite : ['slug' => $rewrite],
                 'supports' => $pt['supports'],
-                'labels' => array (
+                'labels' => [
                     'name' => ucfirst($pt['pluriel']),
                     'name_admin_bar' =>  ucfirst($pt['singulier']),
                     'singular_name' => ucfirst($pt['singulier']),
@@ -87,9 +87,9 @@ class CustomPostTypes
                     'not_found' => ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single,
                     'not_found_in_trash' => ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single.' dans la corbeille',
                     'parent' => ucfirst($pt['pluriel']).' parent'.$fem_single.'s',
-                ),
+                ],
                 'capability_type'=>(isset($pt['capability_type'])) ? $pt['capability_type'] : 'post',
-            );
+            ];
 
             if(isset($pt['capabilities']))
                 $_PT_PARAMS['capabilities'] = $pt['capabilities'];

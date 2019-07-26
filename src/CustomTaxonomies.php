@@ -22,7 +22,7 @@ class CustomTaxonomies
 
     public function __construct()
     {
-        add_action( 'init', array(&$this, 'app_create_taxonomies'), 0 );
+        add_action( 'init', [&$this, 'app_create_taxonomies'], 0 );
     }
 
     /**
@@ -99,7 +99,7 @@ class CustomTaxonomies
         global $taxonomies_extra_fields;
         if(!empty($taxonomies_extra_fields)){
             foreach($taxonomies_extra_fields as $id_field => $field_values) {
-                if (!isset($field_values['taxonomies'])) $field_values['taxonomies'] = array();
+                if (!isset($field_values['taxonomies'])) $field_values['taxonomies'] = [];
                 if (!isset($field_values['type'])) $field_values['type'] = 'text';
                 if (in_array($tag, $field_values['taxonomies'])) { ?>
                     <div class="form-field">
@@ -137,15 +137,15 @@ class CustomTaxonomies
             if(!isset($args['feminin']) || !is_bool($args['hierarchical']))
                 $args['feminin'] = true;
             if(empty($args['post_types']))
-                $args['post_types'] = array('post','page');
+                $args['post_types'] = ['post','page'];
             if(is_string($args['post_types']))
-                $args['post_types'] = array($args['post_types']);
+                $args['post_types'] = [$args['post_types']];
 
             $un_fem = 'un'.($args['feminin'] ? 'e':'').' '.$args['name'];
 
-            register_taxonomy($slug,$args['post_types'], array(
+            register_taxonomy($slug,$args['post_types'], [
                 'hierarchical' => $args['hierarchical'],
-                'labels' => array(
+                'labels' => [
                     'name' => _x( $args['pluriel'], 'taxonomy general name' ),
                     'singular_name' => _x( $args['name'], 'taxonomy singular name' ),
                     'search_items' =>  ( 'Search '.$args['pluriel'] ),
@@ -157,21 +157,21 @@ class CustomTaxonomies
                     'add_new_item' => ( 'Ajouter '.$un_fem ),
                     'new_item_name' => ( 'Nouve'.($args['feminin'] ? 'lle':'au').' nom de '.$args['name'].' ' ),
                     'menu_name' => ( $args['pluriel'] ),
-                ),
+                ],
                 'show_ui' => true,
                 'query_var' => true,
-                'rewrite' => array( 'slug' => $slug ),
-            ));
+                'rewrite' => !empty($args['rewrite']) ? $args['rewrite'] : ['slug' => $slug],
+            ]);
         }
 
-        $default_taxonomies = array( 'category' => array(), 'post_tag' => array() );
+        $default_taxonomies = ['category' => [], 'post_tag' => []];
         $all_taxonomies = array_merge( $taxonomies, $default_taxonomies );
 
         foreach ($all_taxonomies as $slug => $args) {
-            add_action($slug . '_edit_form_fields', array(&$this, 'extra_edit_tax_fields'), 10, 2);
-            add_action($slug . '_add_form_fields', array(&$this, 'extra_add_tax_fields'), 10, 2);
-            add_action('edited_' . $slug, array(&$this, 'save_extra_taxonomy_fields'), 10, 2);
-            add_action('create_' . $slug, array(&$this, 'save_extra_taxonomy_fields'), 10, 2);
+            add_action($slug . '_edit_form_fields', [&$this, 'extra_edit_tax_fields'], 10, 2);
+            add_action($slug . '_add_form_fields', [&$this, 'extra_add_tax_fields'], 10, 2);
+            add_action('edited_' . $slug, [&$this, 'save_extra_taxonomy_fields'], 10, 2);
+            add_action('create_' . $slug, [&$this, 'save_extra_taxonomy_fields'], 10, 2);
         }
     }
 
