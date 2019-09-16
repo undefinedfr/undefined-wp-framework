@@ -275,6 +275,11 @@ class AbstractController
         // Custom post_type list
         if(is_archive() && !is_tax()){
             $this->context['post_type'] = $this->_queriedObject->name;
+            // Is paged page
+            if(is_paged()){
+                $templates[] = 'archive-paged.twig';
+                $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
+            }
             $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
@@ -283,6 +288,12 @@ class AbstractController
         // Custom taxonomy template
         if(is_tax()){
             $this->context['taxonomy'] = $this->_queriedObject->taxonomy;
+            // Is paged page
+            if(is_paged()){
+                $templates[] = 'taxonomy-paged.twig';
+                $templates[] = 'taxonomy-' . $this->_queriedObject->name . '-paged.twig';
+                $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '-paged.twig';
+            }
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
