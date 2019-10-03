@@ -1,6 +1,6 @@
 {
   "name":"undefinedfr/undefined-wp-framework",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "type": "wordpress-boilerplate",
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
@@ -12,7 +12,8 @@
       "src/Functions.php"
     ],
     "exclude-from-classmap" : [
-      "src/Plugins/"
+      "src/Plugins/",
+      "src/Gutenberg/"
     ],
     "psr-4" : {
       "Undefined\\Core\\" : "src/"
