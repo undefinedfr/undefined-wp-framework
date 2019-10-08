@@ -10,8 +10,8 @@ namespace Undefined\Core\Assets;
  */
 class Assets
 {
-    private $_assetsPath;
-    private $_jsPath;
+    protected $_assetsPath;
+    protected $_jsPath;
     protected $_scripts = [
         'libs' => [
             'handle' => 'lib',
