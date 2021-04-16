@@ -24,7 +24,7 @@ class Router
     {
         if(is_admin())
             return;
-        
+
         global $undfdApp;
         $undfd_template = get_query_var('undfd_template');
         $undfd_section = get_query_var('undfd_section');
@@ -70,7 +70,7 @@ class Router
     {
         $vars[] = 'undfd_template';
         $vars[] = 'undfd_section';
-        
+
         return $vars;
     }
 
@@ -97,7 +97,7 @@ class Router
         }
 
         // WPML Support
-        $redirect .= (defined('ICL_LANGUAGE_CODE') ? '&lang=' . ICL_LANGUAGE_CODE : '');
+        $redirect .= ((defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php')) ? '&lang=' . ICL_LANGUAGE_CODE : '');
 
         $this->_rules[] =  [
             'regex' => $regex,

@@ -327,7 +327,7 @@ class AbstractController
     private function _getOptions($keys = [])
     {
         $prefixLang = '';
-        if(defined('ICL_LANGUAGE_CODE')) {
+        if(defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php')) {
             global $sitepress;
             $prefixLang = (ICL_LANGUAGE_CODE != $sitepress->get_default_language() ? ICL_LANGUAGE_CODE . '_' : '');
         }
