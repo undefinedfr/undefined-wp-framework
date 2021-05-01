@@ -10,8 +10,7 @@ namespace Undefined\Core\Assets;
  */
 class Assets
 {
-    protected $_assetsPath;
-    protected $_jsPath;
+    protected $_distPath;
     protected $_scripts = [
         'libs' => [
             'handle' => 'lib',
@@ -45,8 +44,7 @@ class Assets
 
     public function __construct()
     {
-        $this->_assetsPath  = get_stylesheet_directory_uri() . '/assets/css/';
-        $this->_jsPath      = get_stylesheet_directory_uri() . '/assets/dist/';
+        $this->_distPath    = get_stylesheet_directory_uri() . '/dist/';
 
         $this->_scripts['scripts']['args'] = array(
             'site_url' => get_site_url(),
@@ -67,7 +65,9 @@ class Assets
             wp_enqueue_script( 'jquery' );
 
             foreach ($this->_scripts as $scripts) {
-                wp_enqueue_script( $scripts['handle'], $this->_jsPath . $scripts['filename'], $scripts['deps'], $scripts['version'], !empty($scripts['infooter']) );
+                $assetHash = $this->_getPathAssetHash( $scripts['filename'] );
+
+                wp_enqueue_script( $scripts['handle'], $this->_distPath . $assetHash, $scripts['deps'], $scripts['version'], !empty($scripts['infooter']) );
 
                 if(!empty($scripts['args'])){
                     wp_localize_script( $scripts['handle'], 'args', $scripts['args']);
@@ -79,7 +79,8 @@ class Assets
     public function app_styles_init()
     {
         foreach ($this->_styles as $styles) {
-            wp_enqueue_style( $styles['handle'], $this->_assetsPath . $styles['filename'],  $styles['deps'], $styles['version'] );
+            $assetHash = $this->_getPathAssetHash( $styles['filename'] );
+            wp_enqueue_style( $styles['handle'], $this->_distPath . $assetHash,  $styles['deps'], $styles['version'] );
         }
     }
 
@@ -89,5 +90,19 @@ class Assets
 
     public function getScripts(){
         return $this->_scripts;
+    }
+
+    private function _getPathAssetHash( $asset )
+    {
+        $map = get_stylesheet_directory() . '/dist/hash.json';
+
+        $hash = file_exists( $map ) ? json_decode( file_get_contents( $map ), true ) : [];
+
+        if ( array_key_exists( $asset, $hash ) ) {
+            return $hash[$asset];
+        }
+
+        $extension = array_pop(explode('.', $asset));
+        return $extension . '/' . $asset;
     }
 }
