@@ -44,7 +44,7 @@ class Assets
 
     public function __construct()
     {
-        $this->_distPath    = get_stylesheet_directory_uri() . '/dist/';
+        $this->_distPath    = get_stylesheet_directory_uri() . '/public/assets/';
 
         $this->_scripts['scripts']['args'] = array(
             'site_url' => get_site_url(),
@@ -94,7 +94,7 @@ class Assets
 
     private function _getPathAssetHash( $asset )
     {
-        $map = get_stylesheet_directory() . '/dist/hash.json';
+        $map = get_stylesheet_directory() . '/public/assets/hash.json';
 
         $hash = file_exists( $map ) ? json_decode( file_get_contents( $map ), true ) : [];
 
@@ -102,7 +102,8 @@ class Assets
             return $hash[$asset];
         }
 
-        $extension = array_pop(explode('.', $asset));
+        $extension = explode('.', $asset);
+        $extension = end($extension);
         return $extension . '/' . $asset;
     }
 }
