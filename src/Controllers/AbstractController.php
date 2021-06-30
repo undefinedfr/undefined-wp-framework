@@ -285,8 +285,8 @@ class AbstractController
             $templates[] = 'archive.twig';
         }
 
-        // Custom taxonomy template
-        if(is_tax()){
+        // Taxonomy template
+        if(is_tax() || is_category()){
             $this->context['taxonomy'] = $this->_queriedObject->taxonomy;
             // Is paged page
             if(is_paged()){
