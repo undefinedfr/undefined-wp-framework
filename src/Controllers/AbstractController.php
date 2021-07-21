@@ -286,7 +286,7 @@ class AbstractController
         }
 
         // Taxonomy template
-        if(is_tax() || is_category()){
+        if(is_tax() || is_category() || is_tag()){
             $this->context['taxonomy'] = $this->_queriedObject->taxonomy;
             // Is paged page
             if(is_paged()){
@@ -299,7 +299,6 @@ class AbstractController
             $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
             $templates[] = 'taxonomy.twig';
         }
-
 
         // Page template
         if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
