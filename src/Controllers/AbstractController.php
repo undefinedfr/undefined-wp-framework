@@ -304,6 +304,7 @@ class AbstractController
         if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
             $template = rtrim(get_page_template_slug(), '.php');
             $templates[] = $template_name . '-' . $template . '.twig';
+            $templates[] = $template . '.twig';
         }
 
         $templates[] = $template_name . '.twig';
