@@ -97,7 +97,7 @@ class Router
         }
 
         // WPML Support
-        $redirect .= ((defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php')) ? '&lang=' . ICL_LANGUAGE_CODE : '');
+        $redirect .= ((defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php') && !is_plugin_active('polylang-pro/polylang.php')) ? '&lang=' . ICL_LANGUAGE_CODE : '');
 
         $this->_rules[] =  [
             'regex' => $regex,
