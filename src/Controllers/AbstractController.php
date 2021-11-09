@@ -280,7 +280,7 @@ class AbstractController
                 $templates[] = 'archive-paged.twig';
                 $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
             }
-            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
+            $templates[] = 'archive-' . $this->_queriedObject->slug . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
@@ -291,7 +291,7 @@ class AbstractController
             // Is paged page
             if(is_paged()){
                 $templates[] = 'taxonomy-paged.twig';
-                $templates[] = 'taxonomy-' . $this->_queriedObject->name . '-paged.twig';
+                $templates[] = 'taxonomy-' . $this->_queriedObject->slug . '-paged.twig';
                 $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '-paged.twig';
             }
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
