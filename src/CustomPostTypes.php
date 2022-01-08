@@ -68,7 +68,7 @@ class CustomPostTypes
                 'show_in_menu' => true,
                 'hierarchical' => !empty($pt['hierarchical']),
                 'query_var' => true,
-                'has_archive' => is_array($rewrite) ? $idpt : $rewrite,
+                'has_archive' => is_array($rewrite) ? $rewrite['slug'] : ($pt['has_archive'] ?? true),
                 'rewrite' => is_array($rewrite) ? $rewrite : ['slug' => $rewrite],
                 'supports' => $pt['supports'],
                 'labels' => [
