@@ -280,7 +280,7 @@ class AbstractController
                 $templates[] = 'archive-paged.twig';
                 $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
             }
-            $templates[] = 'archive-' . $this->_queriedObject->slug . '.twig';
+            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
