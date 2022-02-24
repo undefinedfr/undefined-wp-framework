@@ -259,7 +259,9 @@ class AbstractController
             $template_name .= '-' . $this->_action;
         }
         // Sub section
-        if((!empty($this->_section) && $this->_section != 'index')){
+        if(!empty($this->_section)
+            && $this->_section != 'index'
+            && str_replace('-', '', $this->_section) != $this->_action){
             $template_name .= '-' . $this->_section;
         }
 

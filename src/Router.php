@@ -14,23 +14,24 @@ class Router
     {
         add_action( 'init', [&$this, 'customRewriteRule'], 10, 0 );
         add_filter( 'query_vars', [&$this, 'registerQueryVars'] );
-        add_action( 'parse_query', array(&$this, 'instanceController') );
+        add_filter( 'template_include', array(&$this, 'instanceController'), 99, 1);
     }
 
     /**
      * Instance Controller
+     * @param $template
      */
-    public function instanceController()
+    public function instanceController( $template )
     {
         if(is_admin())
-            return;
+            return $template;
 
         global $undfdApp;
         $undfd_template = get_query_var('undfd_template');
         $undfd_section = get_query_var('undfd_section');
 
         if (!$undfd_template)
-            return;
+            return $template;
 
         // Init Controller
         $controllerName = $this->_getControllerName($undfd_template);
