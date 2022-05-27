@@ -98,9 +98,7 @@ class Block
      */
     public function render()
     {
-        global $post;
-
-        Timber::render( $this->render_template, ['post' => new Timber\Post($post)] );
+        Timber::render( $this->render_template, ['block' => $block] );
     }
 
     public function loadAssets()
