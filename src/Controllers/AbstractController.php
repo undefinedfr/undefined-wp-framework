@@ -275,7 +275,7 @@ class AbstractController
         }
 
         // Custom post_type list
-        if(is_archive() && !is_tax()){
+        if(is_archive() && !is_tax() && !is_author()){
             $this->context['post_type'] = $this->_queriedObject->name;
             // Is paged page
             if(is_paged()){
@@ -307,6 +307,20 @@ class AbstractController
             $template = rtrim(get_page_template_slug(), '.php');
             $templates[] = $template_name . '-' . $template . '.twig';
             $templates[] = $template . '.twig';
+        }
+
+        // Author
+        if(is_author()){
+            // Is paged page
+            if(is_paged()){
+                $templates[] = 'author-paged.twig';
+                $templates[] = 'author-' . $this->_queriedObject->user_login . '-paged.twig';
+                $templates[] = 'author-' . $this->_queriedObject->ID . '-paged.twig';
+            }
+            $templates[] = 'author-' . $this->_queriedObject->user_login . '.twig';
+            $templates[] = 'author-' . $this->_queriedObject->ID . '.twig';
+
+            $templates[] = 'author.twig';
         }
 
         $templates[] = $template_name . '.twig';
