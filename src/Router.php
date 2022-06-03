@@ -75,6 +75,14 @@ class Router
         return $vars;
     }
 
+    public function getRule( $rule ) {
+        return $this->getRules()[$rule];
+    }
+
+    public function getRules() {
+        return $this->_rules;
+    }
+
     /**
      * Add rule
      *
@@ -100,7 +108,7 @@ class Router
         // WPML Support
         $redirect .= ((defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php') && !is_plugin_active('polylang-pro/polylang.php')) ? '&lang=' . ICL_LANGUAGE_CODE : '');
 
-        $this->_rules[] =  [
+        $this->_rules[$slug . ($section ? '-' . $section : '') . (!empty($params) ? '-' . implode('-', array_keys($params)) : '')] =  [
             'regex' => $regex,
             'redirect' => $redirect,
         ];
