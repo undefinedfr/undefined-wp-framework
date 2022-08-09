@@ -90,7 +90,15 @@ class Block
                 'category'        => $this->category,
                 'icon'            => $this->icon,
                 'mode'            => $this->mode,
-                'keywords'        => array_merge([$this->name], $this->keywords)
+                'keywords'        => array_merge([$this->name], $this->keywords),
+//               'example'  => [
+//                   'attributes' => [
+//                       'mode' => 'preview',
+//                       'data' => [
+//                           'preview_image_help' => get_template_directory_uri() . $this->name . '.jpg'
+//                       ]
+//                   ]
+//               ]
             ));
         }
     }
@@ -100,7 +108,31 @@ class Block
      */
     public function render( $block )
     {
-        Timber::render( $this->render_template, ['block' => $block] );
+        $block = $this->_prepareBlock($block);
+        Timber::render( $this->render_template, [ 'block' => $block ] );
+    }
+
+    /**
+     * On admin update, block data is send to template, not all block
+     * @param $block
+     * @return mixed
+     */
+    protected function _prepareBlock( $block ) {
+        $keys = array_keys($block['data']);
+        if(strpos(reset($keys), 'field_') == false) {
+            $data = $block['data'];
+            $block['data'] = [];
+            foreach($data as $key => $field) {
+                $acfObj = get_field_object($key);
+                if($acfObj['type'] == 'clone') {
+                    $block['data'] = array_merge($block['data'], $acfObj['value']);
+                } else {
+                    $block['data'][$acfObj['name']] = $acfObj['value'];
+                }
+            }
+        }
+
+        return $block;
     }
 
     public function loadAssets()
