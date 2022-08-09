@@ -91,14 +91,11 @@ class Block
                 'icon'            => $this->icon,
                 'mode'            => $this->mode,
                 'keywords'        => array_merge([$this->name], $this->keywords),
-//               'example'  => [
-//                   'attributes' => [
-//                       'mode' => 'preview',
-//                       'data' => [
-//                           'preview_image_help' => get_template_directory_uri() . $this->name . '.jpg'
-//                       ]
-//                   ]
-//               ]
+                'example'  => [
+                    'attributes' => [
+                        'mode' => 'preview',
+                    ]
+                ]
             ));
         }
     }
@@ -109,7 +106,8 @@ class Block
     public function render( $block )
     {
         $block = $this->_prepareBlock($block);
-        Timber::render( $this->render_template, [ 'block' => $block ] );
+
+        $this->_render( $block );
     }
 
     /**
@@ -133,6 +131,15 @@ class Block
         }
 
         return $block;
+    }
+
+    /**
+     * On admin update, block data is send to template, not all block
+     * @param $block
+     * @return mixed
+     */
+    protected function _render( $block ) {
+        Timber::render( $this->render_template, [ 'block' => $block ] );
     }
 
     public function loadAssets()
