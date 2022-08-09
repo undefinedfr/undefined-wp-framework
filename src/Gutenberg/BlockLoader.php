@@ -38,7 +38,7 @@ class BlockLoader{
 		$classname = str_replace('.php', '', $classname);
 
 		$class = new $classname();
-		
+
 		$this->set(str_replace('.php', '', $file), $class);
 	}
 
@@ -49,6 +49,11 @@ class BlockLoader{
 		}
 
 		return $this->_blocks[$plugin];
+	}
+
+	public function getAll()
+	{
+		return $this->_blocks;
 	}
 
 	public function set( $plugin, $class )
