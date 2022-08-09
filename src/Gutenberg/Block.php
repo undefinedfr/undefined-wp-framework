@@ -80,14 +80,13 @@ class Block
         if ( function_exists( 'acf_register_block' ) ) {
 
             $this->render_template = apply_filters('undfnd_gutenberg_bloc_template', (get_template_directory() . '/templates/partial/block/' . $this->name . '.twig'), $this->name);
-            $this->render_callback = apply_filters('undfnd_gutenberg_bloc_callback', [$this, 'render'], $this->name);
 
             acf_register_block(array(
                 'name'            => $this->name,
                 'title'           => $this->title,
                 'description'     => $this->description,
                 'render_template' => $this->render_template,
-                'render_callback' => $this->render_callback,
+                'render_callback' => [$this, 'render'],
                 'category'        => $this->category,
                 'icon'            => $this->icon,
                 'mode'            => $this->mode,
