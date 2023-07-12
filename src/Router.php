@@ -89,7 +89,11 @@ class Router
      * @param $slug
      * @param null $section
      */
-    protected function _addRule($slug, $section = null, $params = []){
+    protected function _addRule($slug, $section = null, $params = []) {
+        if (!function_exists('is_plugin_active')) {
+            include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        }
+
         $regex = '^' . $slug;
         $regex .= (!empty($section) ? '/' . $section : '');
         foreach($params as $param){
@@ -106,7 +110,34 @@ class Router
         }
 
         // WPML Support
-        $redirect .= ((defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php') && !is_plugin_active('polylang-pro/polylang.php')) ? '&lang=' . ICL_LANGUAGE_CODE : '');
+        if (defined('ICL_LANGUAGE_CODE') && !is_plugin_active('polylang/polylang.php') && !is_plugin_active('polylang-pro/polylang.php')) {
+            $defaultLanguage = apply_filters( 'wpml_default_language' ,null );
+            $langs = wpml_active_languages();
+            foreach ($langs as $lang) {
+                if ($lang['language_code'] != $defaultLanguage) {
+                    $this->_rules[$slug . ($section ? '-' . $section : '') . (!empty($params) ? '-' . implode('-', array_keys($params)) : '') . '-' . $lang['language_code']] = [
+                        'regex' => str_replace('^', '^' . $lang['language_code'] . '/', $regex),
+                        'redirect' => $redirect . '&lang=' . $lang['language_code'],
+                    ];
+                }
+            }
+            $redirect .=  '&lang=' . $defaultLanguage;
+        }
+
+        // Polylang Support
+        if (is_plugin_active('polylang/polylang.php') || is_plugin_active('polylang-pro/polylang.php')) {
+            $defaultLanguage = pll_default_language('slug');
+            $langs = pll_languages_list(['fields' => 'slug']);
+            foreach ($langs as $lang) {
+                if ($lang != $defaultLanguage) {
+                    $this->_rules[$slug . ($section ? '-' . $section : '') . (!empty($params) ? '-' . implode('-', array_keys($params)) : '') . '-' . $lang] = [
+                        'regex' => str_replace('^', '^' . $lang . '/', $regex),
+                        'redirect' => $redirect . '&lang=' . $lang,
+                    ];
+                }
+            }
+            $redirect .=  '&lang=' . $defaultLanguage;
+        }
 
         $this->_rules[$slug . ($section ? '-' . $section : '') . (!empty($params) ? '-' . implode('-', array_keys($params)) : '')] =  [
             'regex' => $regex,
