@@ -68,6 +68,12 @@ class Block
     public function __construct($stylesheet = null)
     {
         $this->title = __($this->title);
+
+        $iconPath = apply_filters('undfnd_gutenberg_bloc_icon_path', (get_template_directory() . '/public/assets/images/icons/gutenberg-icons/' . $this->name . '.svg'), $this);
+        if(file_exists($iconPath)) {
+            $this->icon = file_get_contents( $iconPath );
+        }
+
         add_action( 'acf/init', [$this, 'registerBlock'] );
         add_action( 'enqueue_block_editor_assets', [$this, 'loadAssets'] );
     }
@@ -134,12 +140,16 @@ class Block
     }
 
     /**
-     * On admin update, block data is send to template, not all block
+     * Render block with Timber
      * @param $block
      * @return mixed
      */
     protected function _render( $block ) {
-        Timber::render( $this->render_template, [ 'block' => $block ] );
+        if(empty(array_filter($block['data'])) && is_admin() && file_exists(apply_filters('undfnd_gutenberg_bloc_empty_template', (get_template_directory() . '/templates/layout/gutenberg-preview.twig'), $block, $this))) {
+            Timber::render( 'layout/gutenberg-preview.twig', [ 'image' => $this->name ] );
+        } else {
+            Timber::render( $this->render_template, [ 'block' => $block ] );
+        }
     }
 
     public function loadAssets()
