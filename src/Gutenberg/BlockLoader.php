@@ -37,9 +37,11 @@ class BlockLoader{
 
 		$classname = str_replace('.php', '', $classname);
 
-		$class = new $classname();
+        if(class_exists($classname)) {
+            $class = new $classname();
 
-		$this->set(str_replace('.php', '', $file), $class);
+            $this->set(str_replace('.php', '', $file), $class);
+        }
 	}
 
 	public function get( $plugin )
