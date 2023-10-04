@@ -42,12 +42,14 @@ class CustomPostTypes
     private function _launch_create_posttypes($post_types)
     {
         foreach($post_types as $idpt => $pt){
-            if(!isset($pt['pluriel'])) $pt['pluriel'] = $idpt;
-            if(!isset($pt['singulier'])) $pt['singulier'] = $idpt;
-            if(!isset($pt['feminin'])) $pt['feminin'] = 0;
-            if(!isset($pt['supports'])) $pt['supports'] = ['title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'];
-            if(!isset($pt['taxonomies'])) $pt['taxonomies'] = ['post_tag','category'];
-            $rewrite = (isset($pt['rewrite'])) ? $pt['rewrite'] : $idpt;
+            $pt = wp_parse_args($pt, [
+                'pluriel'       => ucfirst($idpt) . (substr($idpt, -1) != 's' ?  's' : ''),
+                'singulier'     => ucfirst($idpt),
+                'feminin'       => false,
+                'supports'      => ['title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'],
+                'taxonomies'    => ['post_tag','category'],
+                'rewrite'       => $idpt,
+            ]);
 
             $fem_single = ($pt['feminin'] ? 'e':'');
             $article_single = 'un'.$fem_single;
@@ -68,8 +70,8 @@ class CustomPostTypes
                 'show_in_menu' => true,
                 'hierarchical' => !empty($pt['hierarchical']),
                 'query_var' => true,
-                'has_archive' => is_array($rewrite) ? $rewrite['slug'] : ($pt['has_archive'] ?? true),
-                'rewrite' => is_array($rewrite) ? $rewrite : ['slug' => $rewrite],
+                'has_archive' => is_array($pt['rewrite']) ? $pt['rewrite']['slug'] : ($pt['has_archive'] ?? true),
+                'rewrite' => is_array($pt['rewrite']) ? $pt['rewrite'] : ['slug' => $pt['rewrite']],
                 'supports' => $pt['supports'],
                 'labels' => [
                     'name' => ucfirst($pt['pluriel']),

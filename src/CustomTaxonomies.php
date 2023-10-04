@@ -132,14 +132,17 @@ class CustomTaxonomies
             return;
 
         foreach($taxonomies as $slug => $args){
-            if(!isset($args['hierarchical']) || !is_bool($args['hierarchical']))
-                $args['hierarchical'] = true;
-            if(!isset($args['feminin']) || !is_bool($args['hierarchical']))
-                $args['feminin'] = true;
-            if(empty($args['post_types']))
-                $args['post_types'] = ['post','page'];
-            if(is_string($args['post_types']))
-                $args['post_types'] = [$args['post_types']];
+            $args = wp_parse_args($args, [
+                'hierarchical'  => true,
+                'show_ui'       => true,
+                'show_in_rest'  => true,
+                'query_var'     => true,
+                'feminin'       => false,
+                'pluriel'       => ucfirst($slug) . (substr($slug, -1) != 's' ?  's' : ''),
+                'name'          => ucfirst($slug),
+                'post_types'    => ['post','page'],
+                'rewrite'       => ['slug' => $slug],
+            ]);
 
             $un_fem = 'un'.($args['feminin'] ? 'e':'').' '.$args['name'];
 
@@ -159,8 +162,9 @@ class CustomTaxonomies
                     'menu_name' => ( $args['pluriel'] ),
                 ],
                 'show_ui' => true,
+                'show_in_rest' => $args['hierarchical'],
                 'query_var' => true,
-                'rewrite' => !empty($args['rewrite']) ? $args['rewrite'] : ['slug' => $slug],
+                'rewrite' => $args['rewrite'],
             ]);
         }
 

@@ -109,9 +109,9 @@ class Block
     /**
      * Render block with twig
      */
-    public function render( $block )
+    public function render( $block, $content = '', $is_preview = false, $post_id = 0 )
     {
-        $block = $this->_prepareBlock($block);
+        $block = $this->_prepareBlock($block, $post_id);
 
         $this->_render( $block );
     }
@@ -121,7 +121,7 @@ class Block
      * @param $block
      * @return mixed
      */
-    protected function _prepareBlock( $block ) {
+    protected function _prepareBlock( $block, $post_id = 0 ) {
         $keys = array_keys($block['data']);
         if(strpos(reset($keys), 'field_') == false) {
             $data = $block['data'];
