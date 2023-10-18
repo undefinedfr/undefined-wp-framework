@@ -133,38 +133,40 @@ class CustomTaxonomies
 
         foreach($taxonomies as $slug => $args){
             $args = wp_parse_args($args, [
-                'hierarchical'  => true,
-                'show_ui'       => true,
-                'show_in_rest'  => true,
-                'query_var'     => true,
-                'feminin'       => false,
-                'pluriel'       => ucfirst($slug) . (substr($slug, -1) != 's' ?  's' : ''),
-                'name'          => ucfirst($slug),
-                'post_types'    => ['post','page'],
-                'rewrite'       => ['slug' => $slug],
+                'hierarchical'      => true,
+                'show_ui'           => true,
+                'show_in_rest'      => true,
+                'query_var'         => true,
+                'feminin'           => false,
+                'show_admin_column' => true,
+                'pluriel'           => ucfirst($slug) . (substr($slug, -1) != 's' ?  's' : ''),
+                'name'              => ucfirst($slug),
+                'post_types'        => ['post','page'],
+                'rewrite'           => ['slug' => $slug],
             ]);
 
             $un_fem = 'un'.($args['feminin'] ? 'e':'').' '.$args['name'];
 
             register_taxonomy($slug,$args['post_types'], [
-                'hierarchical' => $args['hierarchical'],
+                'hierarchical'      => $args['hierarchical'],
                 'labels' => [
-                    'name' => _x( $args['pluriel'], 'taxonomy general name' ),
-                    'singular_name' => _x( $args['name'], 'taxonomy singular name' ),
-                    'search_items' =>  ( 'Search '.$args['pluriel'] ),
-                    'all_items' => ( 'All '.$args['pluriel'] ),
-                    'parent_item' => ( 'Parent '.$args['name'] ),
-                    'parent_item_colon' => ( 'Parent '.$args['name'].':' ),
-                    'edit_item' => ( 'Modifier '.$un_fem ),
-                    'update_item' => ( 'Mettre &agrave; jour '.$un_fem ),
-                    'add_new_item' => ( 'Ajouter '.$un_fem ),
-                    'new_item_name' => ( 'Nouve'.($args['feminin'] ? 'lle':'au').' nom de '.$args['name'].' ' ),
-                    'menu_name' => ( $args['pluriel'] ),
+                    'name'              => __( $args['pluriel'] ),
+                    'singular_name'     => __( $args['name'] ),
+                    'search_items'      => __( 'Search '.$args['pluriel'] ),
+                    'all_items'         => __( 'All '.$args['pluriel'] ),
+                    'parent_item'       => __( 'Parent '.$args['name'] ),
+                    'parent_item_colon' => __( 'Parent '.$args['name'].':' ),
+                    'edit_item'         => __( 'Modifier '.$un_fem ),
+                    'update_item'       => __( 'Mettre &agrave; jour '.$un_fem ),
+                    'add_new_item'      => __( 'Ajouter '.$un_fem ),
+                    'new_item_name'     => __( 'Nouve'.($args['feminin'] ? 'lle':'au').' nom de '.$args['name'].' ' ),
+                    'menu_name'         => __( $args['pluriel'] ),
                 ],
-                'show_ui' => true,
-                'show_in_rest' => $args['hierarchical'],
-                'query_var' => true,
-                'rewrite' => $args['rewrite'],
+                'show_ui'           => $args['show_ui'],
+                'show_admin_column' => $args['show_admin_column'],
+                'show_in_rest'      => $args['hierarchical'],
+                'query_var'         => $args['query_var'],
+                'rewrite'           => $args['rewrite'],
             ]);
         }
 
@@ -187,4 +189,3 @@ class CustomTaxonomies
         return $this->_taxonomies;
     }
 }
-

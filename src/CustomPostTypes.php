@@ -43,12 +43,22 @@ class CustomPostTypes
     {
         foreach($post_types as $idpt => $pt){
             $pt = wp_parse_args($pt, [
-                'pluriel'       => ucfirst($idpt) . (substr($idpt, -1) != 's' ?  's' : ''),
-                'singulier'     => ucfirst($idpt),
-                'feminin'       => false,
-                'supports'      => ['title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'],
-                'taxonomies'    => ['post_tag','category'],
-                'rewrite'       => $idpt,
+                'pluriel'               => ucfirst($idpt) . (substr($idpt, -1) != 's' ?  's' : ''),
+                'singulier'             => ucfirst($idpt),
+                'feminin'               => false,
+                'public'                => true,
+                'publicly_queryable'    => true,
+                'show_ui'               => true,
+                'show_in_rest'          => true,
+                '_builtin'              => false,
+                'show_in_menu'          => true,
+                'query_var'             => true,
+                'capability_type'       => 'post',
+                'menu_icon'             => null,
+                'menu_position'         => 5,
+                'supports'              => ['title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'],
+                'taxonomies'            => ['post_tag','category'],
+                'rewrite'               => $idpt,
             ]);
 
             $fem_single = ($pt['feminin'] ? 'e':'');
@@ -57,48 +67,47 @@ class CustomPostTypes
             $no_single = 'aucun'.$fem_single;
 
             $_PT_PARAMS = [
-                'label' => ucfirst($pt['pluriel']),
-                'singular_label' => ucfirst($pt['singulier']),
-                'description' => '',
-                'public' => true,
-                'publicly_queryable' => true,
-                'taxonomies' => $pt['taxonomies'],
-                'menu_position' => 5,
-                'show_ui' => true,
-                'show_in_rest'       => true,
-                '_builtin' => false,
-                'show_in_menu' => true,
-                'hierarchical' => !empty($pt['hierarchical']),
-                'query_var' => true,
-                'has_archive' => is_array($pt['rewrite']) ? $pt['rewrite']['slug'] : ($pt['has_archive'] ?? true),
-                'rewrite' => is_array($pt['rewrite']) ? $pt['rewrite'] : ['slug' => $pt['rewrite']],
-                'supports' => $pt['supports'],
+                'label'                 => __(ucfirst($pt['pluriel'])),
+                'singular_label'        => __(ucfirst($pt['singulier'])),
+                'description'           => '',
+                'public'                => $pt['public'],
+                'publicly_queryable'    => $pt['publicly_queryable'],
+                'taxonomies'            => $pt['taxonomies'],
+                'menu_position'         => $pt['menu_position'],
+                'show_ui'               => $pt['show_ui'],
+                'show_in_rest'          => $pt['show_in_rest'],
+                '_builtin'              => $pt['_builtin'],
+                'show_in_menu'          => $pt['show_in_menu'],
+                'hierarchical'          => !empty($pt['hierarchical']),
+                'query_var'             => $pt['query_var'],
+                'has_archive'           => is_array($pt['rewrite']) ? $pt['rewrite']['slug'] : ($pt['has_archive'] ?? true),
+                'rewrite'               => is_array($pt['rewrite']) ? $pt['rewrite'] : ['slug' => $pt['rewrite']],
+                'supports'              => $pt['supports'],
+                'menu_icon'             => $pt['menu_icon'],
+                'capability_type'       => $pt['capability_type'],
                 'labels' => [
-                    'name' => ucfirst($pt['pluriel']),
-                    'name_admin_bar' =>  ucfirst($pt['singulier']),
-                    'singular_name' => ucfirst($pt['singulier']),
-                    'menu_name' => ucfirst($pt['pluriel']),
-                    'add_new' => 'Ajouter '.$article_single.' '.$pt['singulier'],
-                    'add_new_item' => 'Ajouter '.$article_single.' '.$new_single.' '.$pt['singulier'],
-                    'edit' => 'Modifier',
-                    'edit_item' => 'Modifier '.$article_single.' '.$pt['singulier'],
-                    'new_item' => ucfirst($new_single).' '.$pt['singulier'],
-                    'view' => 'Voir des '.$pt['pluriel'],
-                    'view_item' => 'Voir '.$article_single.' '.$pt['singulier'],
-                    'search_items' => 'Rechercher dans les '.$pt['pluriel'],
-                    'not_found' => ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single,
-                    'not_found_in_trash' => ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single.' dans la corbeille',
-                    'parent' => ucfirst($pt['pluriel']).' parent'.$fem_single.'s',
+                    'name'                  => __(ucfirst($pt['pluriel'])),
+                    'name_admin_bar'        => __(ucfirst($pt['singulier'])),
+                    'singular_name'         => __(ucfirst($pt['singulier'])),
+                    'menu_name'             => __(ucfirst($pt['pluriel'])),
+                    'add_new'               => __('Ajouter '.$article_single.' '.$pt['singulier']),
+                    'add_new_item'          => __('Ajouter '.$article_single.' '.$new_single.' '.$pt['singulier']),
+                    'edit'                  => __('Modifier'),
+                    'edit_item'             => __('Modifier '.$article_single.' '.$pt['singulier']),
+                    'new_item'              => __(ucfirst($new_single).' '.$pt['singulier']),
+                    'view'                  => __('Voir des '.$pt['pluriel']),
+                    'view_item'             => __('Voir '.$article_single.' '.$pt['singulier']),
+                    'search_items'          => __('Rechercher dans les '.$pt['pluriel']),
+                    'not_found'             => __(ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single),
+                    'not_found_in_trash'    => __(ucfirst($no_single).' '.$pt['singulier'].' trouv&eacute;'.$fem_single.' dans la corbeille'),
+                    'parent'                => __(ucfirst($pt['pluriel']).' parent'.$fem_single.'s'),
                 ],
-                'capability_type'=>(isset($pt['capability_type'])) ? $pt['capability_type'] : 'post',
             ];
 
-            if(isset($pt['capabilities']))
+            if(!empty($pt['capabilities']))
                 $_PT_PARAMS['capabilities'] = $pt['capabilities'];
-            if(isset($pt['menu_icon']))
-                $_PT_PARAMS['menu_icon'] = $pt['menu_icon'];
 
-            register_post_type($idpt,$_PT_PARAMS);
+            register_post_type($idpt, $_PT_PARAMS);
         }
     }
 
@@ -110,5 +119,3 @@ class CustomPostTypes
         return $this->_posttypes;
     }
 }
-
-

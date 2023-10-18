@@ -128,8 +128,9 @@ class Router
         if (is_plugin_active('polylang/polylang.php') || is_plugin_active('polylang-pro/polylang.php')) {
             $defaultLanguage = pll_default_language('slug');
             $langs = pll_languages_list(['fields' => 'slug']);
+            $polylang = get_option('polylang');
             foreach ($langs as $lang) {
-                if ($lang != $defaultLanguage) {
+                if ($lang != $defaultLanguage || $polylang['hide_default'] == 0) {
                     $this->_rules[$slug . ($section ? '-' . $section : '') . (!empty($params) ? '-' . implode('-', array_keys($params)) : '') . '-' . $lang] = [
                         'regex' => str_replace('^', '^' . $lang . '/', $regex),
                         'redirect' => $redirect . '&lang=' . $lang,
