@@ -1,11 +1,11 @@
 {
   "name":"undefinedfr/undefined-wp-framework",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "type": "wordpress-boilerplate",
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
   "require": {
-    "timber/timber": "<=2.0"
+    "timber/timber": "1.23.0"
   },
   "autoload" : {
     "files": [
