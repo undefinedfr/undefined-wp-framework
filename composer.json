@@ -5,7 +5,7 @@
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
   "require": {
-    "timber/timber": ">=1.9"
+    "timber/timber": "<=2.0"
   },
   "autoload" : {
     "files": [
