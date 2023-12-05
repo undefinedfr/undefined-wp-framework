@@ -10,7 +10,14 @@ namespace Undefined\Core\Assets;
  */
 class Assets
 {
+    /**
+     * @var string
+     */
     protected $_distPath;
+
+    /**
+     * @var array[]
+     */
     protected $_scripts = [
         'libs' => [
             'handle' => 'lib',
@@ -27,6 +34,10 @@ class Assets
             'infooter' =>  true
         ]
     ];
+
+    /**
+     * @var array[]
+     */
     protected $_styles = [
         'bootstrap' => [
             'handle' => 'bootstrap',
@@ -42,56 +53,87 @@ class Assets
         ],
     ];
 
+    /**
+     * @retrun void
+     */
     public function __construct()
     {
         $this->_distPath    = get_stylesheet_directory_uri() . '/public/assets/';
 
-        $this->_scripts['scripts']['args'] = array(
-            'site_url' => get_site_url(),
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'template_url' => get_template_directory_uri() . 'tpl',
-            'ip' => $_SERVER['REMOTE_ADDR'],
-            'admin_user' => current_user_can('administrator'),
-            'ajax_nonce' => wp_create_nonce('undefined_ajax_nonce'),
-        );
+        $this->_scripts['scripts']['args'] = [
+            'site_url'      => get_site_url(),
+            'ajax_url'      => admin_url( 'admin-ajax.php' ),
+            'template_url'  => get_template_directory_uri() . 'tpl',
+            'ip'            => $_SERVER['REMOTE_ADDR'],
+            'admin_user'    => current_user_can( 'administrator' ),
+            'ajax_nonce'    => wp_create_nonce( 'undefined_ajax_nonce' ),
+        ];
 
-        add_action( 'wp_enqueue_scripts', array(&$this, 'app_scripts_init') );
-        add_action( 'wp_enqueue_scripts', array(&$this, 'app_styles_init') );
+        add_action( 'wp_enqueue_scripts', [ &$this, 'appScriptsInit' ] );
+        add_action( 'wp_enqueue_scripts', [ &$this, 'appStylesInit' ] );
     }
 
-    public function app_scripts_init()
+    /**
+     * Enqueue scripts
+     *
+     * @return void
+     */
+    public function appScriptsInit()
     {
         if ( !is_admin() ) {
             wp_enqueue_script( 'jquery' );
 
-            foreach ($this->_scripts as $scripts) {
+            foreach ( $this->_scripts as $scripts ) {
                 $assetHash = $this->_getPathAssetHash( $scripts['filename'] );
 
-                wp_enqueue_script( $scripts['handle'], $this->_distPath . $assetHash, $scripts['deps'], $scripts['version'], !empty($scripts['infooter']) );
+                wp_enqueue_script( $scripts['handle'], $this->_distPath . $assetHash, $scripts['deps'], $scripts['version'], !empty( $scripts['infooter'] ) );
 
-                if(!empty($scripts['args'])){
-                    wp_localize_script( $scripts['handle'], 'args', $scripts['args']);
+                if( !empty( $scripts['args'] ) ) {
+                    wp_localize_script( $scripts['handle'], 'args', $scripts['args'] );
                 }
             }
         }
     }
 
-    public function app_styles_init()
+    /**
+     * Enqueue styles
+     *
+     * @return void
+     */
+    public function appStylesInit()
     {
-        foreach ($this->_styles as $styles) {
+        foreach ( $this->_styles as $styles ) {
             $assetHash = $this->_getPathAssetHash( $styles['filename'] );
             wp_enqueue_style( $styles['handle'], $this->_distPath . $assetHash,  $styles['deps'], $styles['version'] );
         }
     }
 
-    public function getStyles(){
+    /**
+     * Get styles
+     *
+     * @return array[]
+     */
+    public function getStyles()
+    {
         return $this->_styles;
     }
 
-    public function getScripts(){
+    /**
+     * Get scripts
+     *
+     * @return array[]
+     */
+    public function getScripts()
+    {
         return $this->_scripts;
     }
 
+    /**
+     * Get path assets hash
+     *
+     * @param $asset
+     * @return mixed|string
+     */
     private function _getPathAssetHash( $asset )
     {
         $map = get_stylesheet_directory() . '/public/assets/hash.json';
@@ -102,8 +144,9 @@ class Assets
             return $hash[$asset];
         }
 
-        $extension = explode('.', $asset);
-        $extension = end($extension);
+        $extension = explode( '.', $asset );
+        $extension = end( $extension );
+
         return $extension . '/' . $asset;
     }
 }

@@ -6,10 +6,14 @@ namespace Undefined\Core;
  *
  * @name Templating
  * @since 1.0.0
+ * @update 2.0.0
  * @package Undefined\Core
  */
 class Templating
 {
+    /**
+     * @return void
+     */
     public function __construct()
     {
         add_action( 'template_redirect', array(&$this, 'templateRedirect') );
@@ -18,20 +22,21 @@ class Templating
 
     /**
      * Load template from Controller method
-     * TODO : Add Timber Support
+     *
+     * @return void
      */
     public function templateRedirect()
     {
         $undfd_template = get_query_var('undfd_template');
-        $undfd_section = get_query_var('undfd_section');
-        
+        $undfd_section  = get_query_var('undfd_section');
+
         if (!$undfd_template)
             return;
 
-        $tpl = $undfd_template . (($undfd_section) ? '--' . str_replace('/', '--', $undfd_section) : '');
-        
-       if(file_exists(TEMPLATEPATH . "/template-$tpl.php")){
-           include (TEMPLATEPATH . "/template-$tpl.php");
+        $tpl = $undfd_template . ( ( $undfd_section ) ? '--' . str_replace( '/', '--', $undfd_section ) : '' );
+
+       if( file_exists( get_template_directory() . '/template-' . $tpl . '.php' ) ){
+           include ( get_template_directory() . '/template-' . $tpl . '.php' );
 
            exit;
        }
@@ -42,15 +47,16 @@ class Templating
      * @param $classes
      * @return array
      */
-    public function customBodyClasses( $classes ) {
+    public function customBodyClasses( $classes )
+    {
         $undfd_template = get_query_var('undfd_template');
-        $undfd_section = get_query_var('undfd_section');
+        $undfd_section  = get_query_var('undfd_section');
 
-        if ( !empty($undfd_template) ) {
+        if ( !empty( $undfd_template ) ) {
             $classes[] = 'page-template-' . $undfd_template;
         }
 
-        if ( !empty($undfd_section) ) {
+        if ( !empty( $undfd_section ) ) {
             $classes[] = 'page-sub-template-' . str_replace('/', '--', $undfd_section);
         }
 

@@ -8,17 +8,17 @@ namespace Undefined\Core\Request;
  */
 class HeaderBag
 {
-    protected $headers = array();
+    protected $headers = [];
 
-    protected $cacheControl = array();
+    protected $cacheControl = [];
 
     /**
      * @param array $headers An array of HTTP headers
      */
-    public function __construct(array $headers = array())
+    public function __construct( array $headers = [] )
     {
-        foreach ($headers as $key => $values) {
-            $this->set($key, $values);
+        foreach ( $headers as $key => $values ) {
+            $this->set( $key, $values );
         }
     }
 
@@ -29,18 +29,21 @@ class HeaderBag
      */
     public function __toString()
     {
-        if (!$headers = $this->all()) {
+        if ( !$headers = $this->all() ) {
             return '';
         }
-        ksort($headers);
-        $max = max(array_map('strlen', array_keys($headers))) + 1;
-        $content = '';
-        foreach ($headers as $name => $values) {
-            $name = ucwords($name, '-');
-            foreach ($values as $value) {
-                $content .= sprintf("%-{$max}s %s\r\n", $name.':', $value);
+
+        ksort( $headers );
+        $max        = max( array_map( 'strlen', array_keys( $headers ) ) ) + 1;
+        $content    = '';
+
+        foreach ( $headers as $name => $values ) {
+            $name = ucwords( $name, '-' );
+            foreach ( $values as $value ) {
+                $content .= sprintf( "%-{$max}s %s\r\n", $name.':', $value );
             }
         }
+
         return $content;
     }
 
@@ -61,7 +64,7 @@ class HeaderBag
      */
     public function keys()
     {
-        return array_keys($this->all());
+        return array_keys( $this->all() );
     }
 
     /**
@@ -69,10 +72,10 @@ class HeaderBag
      *
      * @param array $headers An array of HTTP headers
      */
-    public function replace(array $headers = array())
+    public function replace( array $headers = [] )
     {
-        $this->headers = array();
-        $this->add($headers);
+        $this->headers = [];
+        $this->add( $headers );
     }
 
     /**
@@ -80,10 +83,10 @@ class HeaderBag
      *
      * @param array $headers An array of HTTP headers
      */
-    public function add(array $headers)
+    public function add( array $headers )
     {
-        foreach ($headers as $key => $values) {
-            $this->set($key, $values);
+        foreach ( $headers as $key => $values ) {
+            $this->set( $key, $values );
         }
     }
 
@@ -96,19 +99,20 @@ class HeaderBag
      *
      * @return string|string[]|null The first header value or default value if $first is true, an array of values otherwise
      */
-    public function get($key, $default = null, $first = true)
+    public function get( $key, $default = null, $first = true )
     {
-        $key = str_replace('_', '-', strtolower($key));
+        $key = str_replace( '_', '-', strtolower( $key ) );
         $headers = $this->all();
-        if (!array_key_exists($key, $headers)) {
-            if (null === $default) {
-                return $first ? null : array();
+        if ( !array_key_exists( $key, $headers ) ) {
+            if ( null === $default ) {
+                return $first ? null : [];
             }
-            return $first ? $default : array($default);
+            return $first ? $default : [ $default ];
         }
-        if ($first) {
-            return \count($headers[$key]) ? $headers[$key][0] : $default;
+        if ( $first ) {
+            return \count( $headers[$key] ) ? $headers[$key][0] : $default;
         }
+
         return $headers[$key];
     }
 
@@ -119,19 +123,19 @@ class HeaderBag
      * @param string|string[] $values  The value or an array of values
      * @param bool            $replace Whether to replace the actual value or not (true by default)
      */
-    public function set($key, $values, $replace = true)
+    public function set( $key, $values, $replace = true )
     {
-        $key = str_replace('_', '-', strtolower($key));
-        if (\is_array($values)) {
-            $values = array_values($values);
-            if (true === $replace || !isset($this->headers[$key])) {
+        $key = str_replace( '_', '-', strtolower( $key ) );
+        if ( \is_array( $values ) ) {
+            $values = array_values( $values );
+            if ( true === $replace || !isset( $this->headers[$key] ) ) {
                 $this->headers[$key] = $values;
             } else {
-                $this->headers[$key] = array_merge($this->headers[$key], $values);
+                $this->headers[$key] = array_merge( $this->headers[$key], $values );
             }
         } else {
-            if (true === $replace || !isset($this->headers[$key])) {
-                $this->headers[$key] = array($values);
+            if ( true === $replace || !isset( $this->headers[$key] ) ) {
+                $this->headers[$key] = [ $values ];
             } else {
                 $this->headers[$key][] = $values;
             }
@@ -145,9 +149,9 @@ class HeaderBag
      *
      * @return bool true if the parameter exists, false otherwise
      */
-    public function has($key)
+    public function has( $key )
     {
-        return array_key_exists(str_replace('_', '-', strtolower($key)), $this->all());
+        return array_key_exists( str_replace( '_', '-', strtolower( $key ) ), $this->all() );
     }
 
     /**
@@ -158,9 +162,9 @@ class HeaderBag
      *
      * @return bool true if the value is contained in the header, false otherwise
      */
-    public function contains($key, $value)
+    public function contains( $key, $value )
     {
-        return \in_array($value, $this->get($key, null, false));
+        return \in_array( $value, $this->get( $key, null, false ) );
     }
 
     /**
@@ -168,10 +172,10 @@ class HeaderBag
      *
      * @param string $key The HTTP header name
      */
-    public function remove($key)
+    public function remove( $key )
     {
-        $key = str_replace('_', '-', strtolower($key));
-        unset($this->headers[$key]);
+        $key = str_replace( '_', '-', strtolower( $key ) );
+        unset( $this->headers[$key] );
     }
 
     /**
@@ -181,7 +185,7 @@ class HeaderBag
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->headers);
+        return new \ArrayIterator( $this->headers );
     }
 
     /**
@@ -191,6 +195,6 @@ class HeaderBag
      */
     public function count()
     {
-        return \count($this->headers);
+        return \count( $this->headers );
     }
 }

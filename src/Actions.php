@@ -14,13 +14,17 @@ class Actions extends HookHelper
 {
     protected $_hooks = [];
 
+    /**
+     * @return void
+     */
     public function __construct()
     {
-        $this->setActionsList($this, $this->_hooks);
+        $this->setActionsList( $this, $this->_hooks );
     }
 
     /**
      * Retrieve actions hooks
+     *
      * @return array
      */
     public function getHooks()

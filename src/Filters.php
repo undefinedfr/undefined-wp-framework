@@ -12,18 +12,26 @@ use Undefined\Core\Helpers\HookHelper;
  */
 class Filters extends HookHelper
 {
+    /**
+     * @var array
+     */
     protected $_hooks = [];
 
+    /**
+     * @return void
+     */
     public function __construct()
     {
-        $this->setFiltersList($this, $this->_hooks);
+        $this->setFiltersList( $this, $this->_hooks );
     }
 
     /**
      * Retrieve filters hooks
+     *
      * @return array
      */
-    public function getHooks(){
+    public function getHooks()
+    {
         return $this->_hooks;
     }
 

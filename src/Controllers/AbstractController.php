@@ -12,37 +12,70 @@ use Timber;
  */
 class AbstractController
 {
-
+    /**
+     * @var string
+     */
     public      $context;
+
+    /**
+     * @var array
+     */
     public      $data       = [];
+
+    /**
+     * @var array
+     */
     protected   $_options   = ['home', 'siteurl', 'posts_per_page', 'page_on_front'];
+
+    /**
+     * @var string
+     */
     protected   $_action;
+
+    /**
+     * @var string
+     */
     protected   $_section;
+
+    /**
+     * @var string
+     */
     protected   $_title;
+
+    /**
+     * @var string
+     */
     protected   $_controllerName;
+
+    /**
+     * @var object
+     */
     protected   $_queriedObject;
 
-    public function __construct($section = null)
+    /**
+     * @return void
+     */
+    public function __construct( $section = null )
     {
-        if(empty($_SESSION['app'])) {
+        if( empty( $_SESSION['app'] ) ) {
             $_SESSION['app'] = [
                 'notices' => []
             ];
         }
 
         $this->_setName();
-        $this->_setSection($section);
+        $this->_setSection( $section );
         $this->_setAction();
 
         $this->_queriedObject = get_queried_object();
 
         $actionName = $this->_action;
-        if(!empty($_POST) && method_exists($this, $actionName . 'PostAction')){
+        if( !empty( $_POST ) && method_exists( $this, $actionName . 'PostAction' ) ) {
             $actionName .= 'Post';
         }
         $actionName .= 'Action';
 
-        if(method_exists($this, $actionName))
+        if( method_exists( $this, $actionName ) )
             $this->$actionName();
 
         add_action( 'wp_title', [$this, 'setCustomWpTitle']);
@@ -55,9 +88,9 @@ class AbstractController
      * @param $route
      * @return bool
      */
-    public function isCurrentRoute($route)
+    public function isCurrentRoute( $route = null )
     {
-        return $route == ($this->getName() . '/' . $this->getSection());
+        return $route == ( $this->getName() . '/' . $this->getSection() );
     }
 
     /**
@@ -97,19 +130,22 @@ class AbstractController
      */
     public function getNotices()
     {
-        return !empty($_SESSION['app']['notices']) ? $_SESSION['app']['notices'] : [];
+        return !empty( $_SESSION['app']['notices'] ) ? $_SESSION['app']['notices'] : [];
     }
 
     /**
      * Unset Session Notices
+     *
+     * @return void
      */
     public function unsetNotices()
     {
-        unset($_SESSION['app']['notices']);
+        unset( $_SESSION['app']['notices'] );
     }
 
     /**
      * Set Wp Title
+     *
      * @return mixed
      */
     public function setCustomWpTitle()
@@ -122,21 +158,24 @@ class AbstractController
      *
      * @param $url
      */
-    public function getUrl($url = null)
+    public function getUrl( $url = null )
     {
-        return !preg_match('#^(http|https):#', $url) ? get_site_url(null, $url) : $url;
+        return !preg_match( '#^(http|https):#', $url ) ? get_site_url( null, $url ) : $url;
     }
 
     /**
      * Render Timber views
+     *
+     * @param $data
+     * @return void
      */
     public function render($data = [])
     {
         $this->context              = Timber::context();
-        $this->context['menu']      = new Timber\Menu();
-        $this->context['options']   = $this->_getOptions(apply_filters('timber_default_options', $this->_options));
+        $this->context['menu']      = Timber::get_menu();
+        $this->context['options']   = $this->_getOptions( apply_filters( 'timber_default_options', $this->_options ) );
 
-        $this->_setContext($data);
+        $this->_setContext( $data );
 
         $this->_render();
     }
@@ -144,9 +183,10 @@ class AbstractController
     /**
      * Set section
      *
-     * @param null $section
+     * @param (string|null) $section
+     * @return void
      */
-    protected function _setSection($section = null)
+    protected function _setSection( $section = null )
     {
         $this->_section = $section;
     }
@@ -154,23 +194,23 @@ class AbstractController
     /**
      * Set Action
      *
-     * @param null $action
+     * @param $action
      */
     protected function _setAction()
     {
-        $formatedSection = str_replace('-', '', $this->_section);
-        $lastSection = explode('/', $formatedSection);
-        $this->_action = !empty($this->_section) ? array_pop($lastSection) : 'index';
+        $formatedSection = str_replace( '-', '', $this->_section );
+        $lastSection = explode( '/', $formatedSection );
+        $this->_action = !empty( $this->_section ) ? array_pop( $lastSection ) : 'index';
     }
 
     /**
      * Set Controller Name
      *
-     * @param null $controllerName
+     * @param $controllerName
      */
     protected function _setName()
     {
-        $this->_controllerName = strtolower(preg_replace('#([a-zA-Z0-9]{1,})Controller$#', '$1' , get_class($this)));
+        $this->_controllerName = strtolower( preg_replace( '#([a-zA-Z0-9]{1,})Controller$#', '$1' , get_class( $this ) ) );
     }
 
     /**
@@ -178,9 +218,9 @@ class AbstractController
      *
      * @param null $controllerName
      */
-    protected function _setTitle($title)
+    protected function _setTitle( $title )
     {
-        $this->_title = \ProjectFunctions::getTranslation($title, DOMAIN_LANG);
+        $this->_title = __( $title );
     }
 
     /**
@@ -188,9 +228,9 @@ class AbstractController
      *
      * @param $url
      */
-    protected function _redirect($url = null)
+    protected function _redirect( $url = null )
     {
-        wp_redirect($this->getUrl($url));
+        wp_redirect( $this->getUrl( $url ) );
         exit;
     }
 
@@ -201,53 +241,59 @@ class AbstractController
      * @param null $message
      * @param bool $dismissible
      */
-    protected function _addNotice($type = 'success', $message = null, $dismissible = false, $auto_dismissible = false)
+    protected function _addNotice( $type = 'success', $message = null, $dismissible = false, $auto_dismissible = false )
     {
-        if(empty($_SESSION['app']['notices']))
+        if( empty( $_SESSION['app']['notices'] ) )
             $_SESSION['app']['notices'] = [];
 
         $_SESSION['app']['notices'][] = [
-            'type' => $type,
-            'message' => \ProjectFunctions::getTranslation($message, DOMAIN_LANG),
-            'dismissible' => $dismissible,
-            'auto_dismissible' => $auto_dismissible,
+            'type'              => $type,
+            'message'           => __( $message ),
+            'dismissible'       => $dismissible,
+            'auto_dismissible'  => $auto_dismissible,
         ];
     }
 
     /**
      * Set Timber context
+     *
+     * @param $data
+     * @return void
      */
-    protected function _setContext($data = [])
+    protected function _setContext( $data = [] )
     {
-        $this->context['id'] = $this->_action;
+        $this->context[ 'id' ] = $this->_action;
 
-        if( is_single() ){
-            $this->context['post'] 		= Timber::query_post();
+        if( is_single() ) {
+            $this->context[ 'post' ]    = Timber::get_posts();
         }
-        else if( is_archive() ){
-            $this->context['posts'] 	= Timber::get_posts();
+        else if( is_archive() ) {
+            $this->context[ 'posts' ]   = Timber::get_posts();
         }
-        else if( is_page() ){
-            $this->context['page'] 		= Timber::query_post();
+        else if( is_page() ) {
+            $this->context[ 'page' ]    = Timber::get_posts();
         }
 
-        $this->context = array_merge( $this->context, apply_filters('timber_global_context_data', $this->data) );
+        $this->context = array_merge( $this->context, apply_filters( 'timber_global_context_data', $this->data ) );
 
-        $this->context = array_merge($data, $this->context);
+        $this->context = array_merge( $data, $this->context );
 
     }
 
     /**
      * Set data to Timber context
+     *
      * @param array $data
      */
-    protected function _setData($data = [], $merge = true)
+    protected function _setData( $data = [], $merge = true )
     {
-        $this->data = !$merge ? $data : array_merge($this->data, $data);
+        $this->data = !$merge ? $data : array_merge( $this->data, $data );
     }
 
     /**
      * Render Timber views
+     *
+     * @return void
      */
     protected function _render()
     {
@@ -255,47 +301,52 @@ class AbstractController
         $template_name = $this->_controllerName;
 
         // Action
-        if((!empty($this->_action) && $this->_action != 'index')){
+        if( ( !empty( $this->_action ) && $this->_action != 'index' ) ) {
             $template_name .= '-' . $this->_action;
         }
+
         // Sub section
-        if(!empty($this->_section)
+        if( !empty($this->_section )
             && $this->_section != 'index'
-            && str_replace('-', '', $this->_section) != $this->_action){
+            && str_replace( '-', '', $this->_section ) != $this->_action ) {
             $template_name .= '-' . $this->_section;
         }
 
-        $post = !empty($this->context['post']) ? $this->context['post'] : false;
+        $post = !empty( $this->context['post'] ) ? $this->context['post'] : false;
 
         // Custom post_type
-        if(!empty($post) && $this->_controllerName == 'single'){
+        if( !empty( $post ) && $this->_controllerName == 'single' ) {
             $this->context['post_type'] = $post->post_type;
             $templates[] = $template_name . '-' . $post->ID . '.twig';
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
         // Custom post_type list
-        if(is_archive() && !is_tax() && !is_author()){
+        if( is_archive() && !is_tax() && !is_author() ) {
             $this->context['post_type'] = $this->_queriedObject->name;
+
             // Is paged page
-            if(is_paged()){
+            if( is_paged() ){
                 $templates[] = 'archive-paged.twig';
                 $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
             }
+
             $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
 
         // Taxonomy template
-        if(is_tax() || is_category() || is_tag()){
+        if( is_tax() || is_category() || is_tag() ) {
             $this->context['taxonomy'] = $this->_queriedObject->taxonomy;
+
             // Is paged page
-            if(is_paged()){
+            if( is_paged() ){
                 $templates[] = 'taxonomy-paged.twig';
                 $templates[] = 'taxonomy-' . $this->_queriedObject->slug . '-paged.twig';
                 $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '-paged.twig';
             }
+
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
@@ -303,20 +354,22 @@ class AbstractController
         }
 
         // Page template
-        if(!empty($post) && $post->post_type == 'page' && get_page_template_slug()){
-            $template = rtrim(get_page_template_slug(), '.php');
+        if( !empty( $post ) && $post->post_type == 'page' && get_page_template_slug() ) {
+            $template = rtrim( get_page_template_slug(), '.php' );
             $templates[] = $template_name . '-' . $template . '.twig';
             $templates[] = $template . '.twig';
         }
 
         // Author
-        if(is_author()){
+        if( is_author() ) {
+
             // Is paged page
-            if(is_paged()){
+            if( is_paged() ) {
                 $templates[] = 'author-paged.twig';
                 $templates[] = 'author-' . $this->_queriedObject->user_login . '-paged.twig';
                 $templates[] = 'author-' . $this->_queriedObject->ID . '-paged.twig';
             }
+
             $templates[] = 'author-' . $this->_queriedObject->user_login . '.twig';
             $templates[] = 'author-' . $this->_queriedObject->ID . '.twig';
 
@@ -326,9 +379,9 @@ class AbstractController
         $templates[] = $template_name . '.twig';
 
         // Protected posts
-        if(!empty($post) && post_password_required( $post->ID )){
-            foreach($templates as &$template){
-                $template = str_replace('.twig', '-password.twig', $template);
+        if( !empty( $post ) && post_password_required( $post->ID ) ) {
+            foreach($templates as &$template) {
+                $template = str_replace( '.twig', '-password.twig', $template );
             }
         }
 
@@ -337,6 +390,7 @@ class AbstractController
 
     /**
      * Get options from wp_options table
+     *
      * @param array $keys
      * @return array|mixed
      */
@@ -346,11 +400,12 @@ class AbstractController
         if(defined('ICL_LANGUAGE_CODE')
             && !is_plugin_active('polylang/polylang.php')
             && !is_plugin_active('polylang-pro/polylang.php')) {
+
             global $sitepress;
-            $prefixLang = (ICL_LANGUAGE_CODE != $sitepress->get_default_language() ? ICL_LANGUAGE_CODE . '_' : '');
+            $prefixLang = ( ICL_LANGUAGE_CODE != $sitepress->get_default_language() ? ICL_LANGUAGE_CODE . '_' : '' );
         }
 
-        if(false === ( $meta = get_transient( 'value' ) )) {
+        if( false === ( $meta = get_transient( 'value' ) ) ) {
 
             // Globals.
             global $wpdb;
@@ -358,26 +413,24 @@ class AbstractController
             // Vars.
             $meta = [];
             $query = "SELECT * FROM $wpdb->options WHERE 1 = 1 AND (";
-            foreach ($keys as $index => $key) {
+            foreach ( $keys as $index => $key ) {
                 $meta[$key] = false;
                 $query .= $index > 0 ? ' OR ' : '';
-                $query .= $wpdb->prepare("option_name = %s", $key);
-                $query .= $wpdb->prepare("OR option_name LIKE '%s'", 'options_' . $prefixLang . '%' . $key);
+                $query .= $wpdb->prepare( "option_name = %s", $key );
+                $query .= $wpdb->prepare( "OR option_name LIKE '%s'", 'options_' . $prefixLang . '%' . $key );
             }
             $query .= ")";
 
 
             // Query database for results.
-            $rows = $wpdb->get_results($query, ARRAY_A);
+            $rows = $wpdb->get_results( $query, ARRAY_A );
 
-
-            foreach ($rows as $row) {
-                if (empty($meta[$row['option_name']]))
-                    $meta[preg_replace('#options_' . $prefixLang . '(.?)#', '$1', $row['option_name'])] = $row['option_value'];
+            foreach ( $rows as $row ) {
+                if ( empty( $meta[ $row[ 'option_name' ] ] ) )
+                    $meta[ preg_replace( '#options_' . $prefixLang . '(.?)#', '$1', $row['option_name'] ) ] = $row['option_value'];
             }
 
-            set_transient($prefixLang . 'options_cache', $meta, HOUR_IN_SECONDS);
-
+            set_transient( $prefixLang . 'options_cache', $meta, HOUR_IN_SECONDS );
         }
 
         return $meta;
