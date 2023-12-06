@@ -38,8 +38,8 @@ class CustomPostTypes
     public function appCreatePosttypes()
     {
         foreach ( $this->_posttypes->getAll() as $post_type => $file ) {
-            $pt = call_user_func( [ $post_type, 'getPostType' ] );
-            if ( !$pt )
+            if ( !class_exists( $post_type )
+                || !method_exists( $post_type, 'register' ) )
                 continue;
 
             call_user_func( [ $post_type, 'register' ] );

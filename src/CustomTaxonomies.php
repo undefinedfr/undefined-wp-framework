@@ -35,6 +35,10 @@ class CustomTaxonomies
     public function appCreateTaxonomies()
     {
         foreach( $this->_taxonomies->getAll() as $taxonomy => $file ) {
+            if ( !class_exists( $taxonomy )
+                || !method_exists( $taxonomy, 'register' ) )
+                continue;
+
             call_user_func( [ $taxonomy, 'register' ] );
 
             if(method_exists( $taxonomy, 'onSaveTerm')) {
