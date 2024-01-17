@@ -321,6 +321,16 @@ class AbstractController
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
         }
 
+        // Search
+        if( is_search() ) {
+            // Is paged page
+            if( is_paged() ){
+                $templates[] = 'search-paged.twig';
+            }
+
+            $templates[] = 'search.twig';
+        }
+
         // Custom post_type list
         if( is_archive() && !is_tax() && !is_author() ) {
             $this->context['post_type'] = $this->_queriedObject->name;
