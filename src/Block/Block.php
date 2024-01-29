@@ -8,6 +8,7 @@ use Timber;
  *
  * @name Block
  * @since 1.0.9
+ * @update 2.0.2
  * @package Undefined\Core\Block
  */
 class Block
@@ -144,10 +145,12 @@ class Block
             foreach( $data as $key => $field ) {
                 $acfObj = get_field_object( $key );
 
-                if( $acfObj['type'] == 'clone' ) {
-                    $block['data'] = array_merge( $block['data'], $acfObj['value'] );
-                } else {
-                    $block['data'][$acfObj['name']] = $acfObj['value'];
+                if ( !empty( $acfObj ) ) {
+                    if( $acfObj['type'] == 'clone' ) {
+                        $block['data'] = array_merge( $block['data'], $acfObj['value'] );
+                    } else {
+                        $block['data'][$acfObj['name']] = $acfObj['value'];
+                    }
                 }
             }
         }
