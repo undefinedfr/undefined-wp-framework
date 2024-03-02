@@ -54,7 +54,7 @@ class CustomPostTypes
             add_action( (class_exists('ACF') ? 'acf/' : '') . 'save_post', function( $post_id ) use ( $post_type ) {
                 if( empty( $post_type )
                     || call_user_func( [ $post_type, 'getPostType' ]) != get_post_type($post_id)
-                    || method_exists( $post_type, 'onSavePost') ) {
+                    || !method_exists( $post_type, 'onSavePost') ) {
                     return;
                 }
 
