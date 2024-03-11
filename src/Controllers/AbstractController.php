@@ -78,7 +78,7 @@ class AbstractController
         if( method_exists( $this, $actionName ) )
             $this->$actionName();
 
-        add_action( 'wp_title', [$this, 'setCustomWpTitle']);
+        add_action( apply_filters( 'undfnd_controller_wp_title_action', 'wp_title' ), [$this, 'setCustomWpTitle']);
         add_action( 'shutdown', [$this, 'unsetNotices']);
     }
 
@@ -262,7 +262,7 @@ class AbstractController
      */
     protected function _setContext( $data = [] )
     {
-        $this->context[ 'id' ] = $this->_action;
+        $this->context[ 'id' ] = $this->_controllerName . '/' . $this->_action;
 
         if( is_single() ) {
             $this->context[ 'post' ]    = Timber::get_posts();
