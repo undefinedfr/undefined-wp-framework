@@ -22,8 +22,10 @@ class Router
     }
 
     /**
-     * Instance Controller
+     * * Instance Controller
+     *
      * @param $template
+     * @return mixed|void
      */
     public function instanceController( $template )
     {
@@ -43,9 +45,10 @@ class Router
         if( file_exists( __PROJECTDIR__ . 'Controllers/' . $controllerName . '.php' ) ) {
             require_once( __PROJECTDIR__ . 'Controllers/' . $controllerName . '.php' );
             $undfdApp->setController( new $controllerName( $undfd_section ) );
+            return;
         }
 
-        return true;
+        return $template;
     }
 
     /**
