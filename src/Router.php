@@ -128,13 +128,13 @@ class Router
         }
         $regex .= '/?$';
 
-        $redirect = add_query_arg('undfd_template', $slug, 'index.php');
-        $redirect = add_query_arg('undfd_section', urlencode( !empty( $section ) ? $section : 'index' ), $redirect);
+        $redirect = self::add_query_arg('undfd_template', $slug, 'index.php');
+        $redirect = self::add_query_arg('undfd_section', urlencode( !empty( $section ) ? $section : 'index' ), $redirect);
 
         if( $params ) {
             $i = 1;
             foreach ( $params as $key => $param ) {
-                $redirect = add_query_arg( $key, '$matches[' . $i . ']', $redirect );
+                $redirect = self::add_query_arg( $key, '$matches[' . $i . ']', $redirect );
                 $i++;
             }
         }
@@ -151,13 +151,13 @@ class Router
                     if ( $lang['language_code'] != $defaultLanguage ) {
                         $this->_rules[$slug . ($section ? '-' . $section : '') . ( !empty( $params ) ? '-' . implode('-', array_keys( $params ) ) : '' ) . '-' . $lang['language_code']] = [
                             'regex'     => str_replace( '^', '^' . $lang['language_code'] . '/', $regex ),
-                            'redirect'  => add_query_arg( 'lang', $lang['language_code'], $redirect ),
+                            'redirect'  => self::add_query_arg( 'lang', $lang['language_code'], $redirect ),
                         ];
                     }
                 }
             }
 
-            $redirect = add_query_arg( 'lang', $defaultLanguage, $redirect );
+            $redirect = self::add_query_arg( 'lang', $defaultLanguage, $redirect );
         }
 
         // Polylang Support
@@ -171,11 +171,11 @@ class Router
                 if ( $lang != $defaultLanguage || $polylang['hide_default'] == 0 ) {
                     $this->_rules[$slug . ($section ? '-' . $section : '') . ( !empty( $params ) ? '-' . implode('-', array_keys( $params ) ) : '' ) . '-' . $lang] = [
                         'regex'     => str_replace( '^', '^' . $lang . '/', $regex ),
-                        'redirect'  => add_query_arg( 'lang', $lang, $redirect ),
+                        'redirect'  => self::add_query_arg( 'lang', $lang, $redirect ),
                     ];
                 }
             }
-            $redirect = add_query_arg( 'lang', $defaultLanguage, $redirect );
+            $redirect = self::add_query_arg( 'lang', $defaultLanguage, $redirect );
         }
 
         $this->_rules[$slug . ( $section ? '-' . $section : '' ) . ( !empty( $params ) ? '-' . implode( '-', array_keys( $params ) ) : '' )] =  [
@@ -183,6 +183,79 @@ class Router
             'redirect'  => $redirect,
         ];
     }
+
+    /**
+     * Hard coded add_query_arg to remove urlencode
+     * @param ...$args
+     * @return array|string|string[]
+     */
+    protected static function add_query_arg( ...$args ) {
+        if ( is_array( $args[0] ) ) {
+            if ( count( $args ) < 2 || false === $args[1] ) {
+                $uri = $_SERVER['REQUEST_URI'];
+            } else {
+                $uri = $args[1];
+            }
+        } else {
+            if ( count( $args ) < 3 || false === $args[2] ) {
+                $uri = $_SERVER['REQUEST_URI'];
+            } else {
+                $uri = $args[2];
+            }
+        }
+
+        $frag = strstr( $uri, '#' );
+        if ( $frag ) {
+            $uri = substr( $uri, 0, -strlen( $frag ) );
+        } else {
+            $frag = '';
+        }
+
+        if ( 0 === stripos( $uri, 'http://' ) ) {
+            $protocol = 'http://';
+            $uri      = substr( $uri, 7 );
+        } elseif ( 0 === stripos( $uri, 'https://' ) ) {
+            $protocol = 'https://';
+            $uri      = substr( $uri, 8 );
+        } else {
+            $protocol = '';
+        }
+
+        if ( str_contains( $uri, '?' ) ) {
+            list( $base, $query ) = explode( '?', $uri, 2 );
+            $base                .= '?';
+        } elseif ( $protocol || ! str_contains( $uri, '=' ) ) {
+            $base  = $uri . '?';
+            $query = '';
+        } else {
+            $base  = '';
+            $query = $uri;
+        }
+
+        wp_parse_str( $query, $qs );
+        if ( is_array( $args[0] ) ) {
+            foreach ( $args[0] as $k => $v ) {
+                $qs[ $k ] = $v;
+            }
+        } else {
+            $qs[ $args[0] ] = $args[1];
+        }
+
+        foreach ( $qs as $k => $v ) {
+            if ( false === $v ) {
+                unset( $qs[ $k ] );
+            }
+        }
+
+        $ret = build_query( $qs );
+        $ret = trim( $ret, '?' );
+        $ret = preg_replace( '#=(&|$)#', '$1', $ret );
+        $ret = $protocol . $base . $ret . $frag;
+        $ret = rtrim( $ret, '?' );
+        $ret = str_replace( '?#', '#', $ret );
+        return $ret;
+    }
+
 
     /**
      * Get Correct Controller Name

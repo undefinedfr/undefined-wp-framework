@@ -9,6 +9,7 @@ namespace Undefined\Core\Mails;
  * @since 1.0.0
  * @package Undefined\Core\Mails
  */
+
 class Mail
 {
     /**
@@ -49,22 +50,7 @@ class Mail
     /**
      * @var string
      */
-    private $emailDirectory     = '';
-
-    /**
-     * @var string
-     */
     private $from 			    = '';
-
-    /**
-     * @var bool
-     */
-    private $headerTemplate     = false;
-
-    /**
-     * @var array
-     */
-    private $headerVariables    = [];
 
     /**
      * @var bool
@@ -75,16 +61,6 @@ class Mail
      * @var array
      */
     private $variables 		    = [];
-
-    /**
-     * @var bool
-     */
-    private $afterTemplate      = false;
-
-    /**
-     * @var array
-     */
-    private $footerVariables    = [];
 
     /**
      * @return Mail
@@ -99,15 +75,11 @@ class Mail
      */
     public function __construct()
     {
-        $this->emailDirectory   = get_template_directory() .'/emails/';
-
-        $this->headerVariables  = [
-            'logo'      => get_template_directory_uri() .'/assets/images/theme/logo.png',
-            'blog_name' => get_bloginfo( 'name' ),
-        ];
-
-        $this->footerVariables  = [
-            'blog_name' => get_bloginfo( 'name' ),
+        $this->variables  = [
+            'blogname'          => get_bloginfo( 'blogname' ),
+            'home_url'          => site_url(),
+            'stylesheet_uri'    => get_stylesheet_directory_uri(),
+            'blog_name'         => get_bloginfo( 'name' ),
         ];
     }
 
@@ -292,72 +264,19 @@ class Mail
     }
 
     /**
-     * Set the before-template file
-     * @param  String $template  Path to HTML template
-     * @param  array  $variables
-     * @throws \Exception
-     * @return Object $this
-     */
-    public function templateHeader( $template = 'header', $variables = null )
-    {
-        $template = $this->emailDirectory . $template . '.php';
-
-        if( !file_exists( $template ) ) {
-            throw new \Exception('Template file not found');
-        }
-
-        if( is_array( $variables ) ){
-            $this->headerVariables = $variables;
-        }
-
-        $this->headerTemplate = $template;
-
-        return $this;
-    }
-
-    /**
      * Set the template file
      * @param  String $template  Path to HTML template
      * @param  array  $variables
      * @throws \Exception
      * @return Object $this
      */
-    public function template( $template, $variables = null )
+    public function template( $template, $variables = [] )
     {
-        $template = $this->emailDirectory . $template . '.php';
-
-        if( !file_exists( $template ) ) {
-            throw new \Exception( 'File not found' );
-        }
         if( is_array( $variables ) ) {
-            $this->variables = $variables;
+            $this->variables = array_merge( $this->variables, $variables );
         }
 
         $this->template = $template;
-
-        return $this;
-    }
-
-    /**
-     * Set the after-template file
-     * @param  String $template  Path to HTML template
-     * @param  array  $variables
-     * @throws \Exception
-     * @return Object $this
-     */
-    public function templateFooter( $template = 'footer', $variables = null )
-    {
-        $template = $this->emailDirectory . $template . '.php';
-
-        if( !file_exists( $template ) ) {
-            throw new \Exception( 'Template file not found' );
-        }
-
-        if( is_array( $variables ) ){
-            $this->footerVariables = $variables;
-        }
-
-        $this->afterTemplate = $template;
 
         return $this;
     }
@@ -368,68 +287,20 @@ class Mail
      */
     public function render()
     {
-        return $this->renderPart( 'before' ) . $this->renderPart( 'main' ) . $this->renderPart( 'after' );
-    }
-
-    /**
-     * Render a specific part of the email
-     * @author Anthony Budd
-     * @param  String $part before, after, main
-     * @return String
-     */
-    public function renderPart( $part = 'main' )
-    {
-        switch( $part ){
-            case 'before':
-                $templateFile = $this->headerTemplate;
-                $variables    = $this->headerVariables;
-                break;
-            case 'after':
-                $templateFile = $this->afterTemplate;
-                $variables    = $this->footerVariables;
-                break;
-
-            case 'main':
-            default:
-                $templateFile = $this->template;
-                $variables    = $this->variables;
-                break;
+        $variables = $this->variables;
+        foreach ( $variables as $key => &$variable ) {
+            if( strpos( $key, '_html_' ) === false )
+                $variable = esc_html( $variable );
         }
-
-        if( $templateFile === false ){
-            return '';
-        }
-
-        $extension = strtolower( pathinfo( $templateFile, PATHINFO_EXTENSION ) );
-
-        if( $extension === 'php' ) {
-            ob_start();
-            ob_clean();
-            foreach( $variables as $key => $value ) {
-                $$key = $value;
-            }
-            include $templateFile;
-            $html = ob_get_clean();
-
-            return $html;
-        } elseif( $extension === 'html' ) {
-            $template = file_get_contents( $templateFile );
-
-            if( !is_array( $variables ) || empty( $variables ) ){
-                return $template;
-            }
-
-            return $this->parseAsMustache( $template, $variables );
-        } else {
-            throw new \Exception( "Unknown extension {$extension} in path '{$templateFile}'" );
-        }
+        return \Timber::compile( $this->template, $this->variables );
     }
 
     public function buildSubject()
     {
         return $this->parseAsMustache(
             $this->subject,
-            array_merge( $this->headerVariables, $this->variables, $this->footerVariables ) );
+            $this->variables
+        );
     }
 
     public function parseAsMustache( $string, $variables = [] )

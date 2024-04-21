@@ -88,16 +88,6 @@ class Request
         $this->session                  = new Request\ServerBag( $session );
         $this->headers                  = new Request\HeaderBag( $this->server->getHeaders() );
         $this->content                  = $content;
-        $this->languages                = null;
-        $this->charsets                 = null;
-        $this->encodings                = null;
-        $this->acceptableContentTypes   = null;
-        $this->pathInfo                 = null;
-        $this->requestUri               = null;
-        $this->baseUrl                  = null;
-        $this->basePath                 = null;
-        $this->method                   = null;
-        $this->format                   = null;
     }
 
     /**
@@ -228,17 +218,6 @@ class Request
             $dup->server = new Request\ServerBag( $server );
             $dup->headers = new Request\HeaderBag( $dup->server->getHeaders() );
         }
-
-        $dup->languages                 = null;
-        $dup->charsets                  = null;
-        $dup->encodings                 = null;
-        $dup->acceptableContentTypes    = null;
-        $dup->pathInfo                  = null;
-        $dup->requestUri                = null;
-        $dup->baseUrl                   = null;
-        $dup->basePath                  = null;
-        $dup->method                    = null;
-        $dup->format                    = null;
 
         if ( !$dup->get( '_format' ) && $this->get( '_format' ) ) {
             $dup->attributes->set( '_format', $this->get( '_format' ) );
