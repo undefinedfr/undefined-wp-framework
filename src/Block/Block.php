@@ -78,7 +78,7 @@ class Block
             $this->icon = file_get_contents( $iconPath );
         }
 
-        add_action( 'acf/init', [$this, 'registerBlock'] );
+        add_action( 'init', [$this, 'registerBlock'] );
         add_action( 'enqueue_block_editor_assets', [$this, 'loadAssets'] );
     }
 
