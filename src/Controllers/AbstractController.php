@@ -198,7 +198,7 @@ class AbstractController
      */
     protected function _setAction()
     {
-        $formatedSection = str_replace( '-', '', $this->_section );
+        $formatedSection = empty( $this->_section ) ? '' : str_replace( '-', '', $this->_section );
         $lastSection = explode( '/', $formatedSection );
         $this->_action = !empty( $this->_section ) ? array_pop( $lastSection ) : 'index';
     }
