@@ -315,7 +315,7 @@ class AbstractController
         $post = !empty( $this->context['post'] ) ? $this->context['post'] : false;
 
         // Custom post_type
-        if( !empty( $post ) && $this->_controllerName == 'single' ) {
+        if( !empty( $post ) && ( $post instanceof Timber\Post ) && $this->_controllerName == 'single' ) {
             $this->context['post_type'] = $post->post_type;
             $templates[] = $template_name . '-' . $post->ID . '.twig';
             $templates[] = $template_name . '-' . $post->post_type . '.twig';
@@ -364,7 +364,7 @@ class AbstractController
         }
 
         // Page template
-        if( !empty( $post ) && $post->post_type == 'page' && get_page_template_slug() ) {
+        if( !empty( $post ) && ( $post instanceof Timber\Post ) && $post->post_type == 'page' && get_page_template_slug() ) {
             $template = rtrim( get_page_template_slug(), '.php' );
             $templates[] = $template_name . '-' . $template . '.twig';
             $templates[] = $template . '.twig';
@@ -389,7 +389,7 @@ class AbstractController
         $templates[] = $template_name . '.twig';
 
         // Protected posts
-        if( !empty( $post ) && post_password_required( $post->ID ) ) {
+        if( !empty( $post ) && ( $post instanceof Timber\Post ) && post_password_required( $post->ID ) ) {
             foreach($templates as &$template) {
                 $template = str_replace( '.twig', '-password.twig', $template );
             }

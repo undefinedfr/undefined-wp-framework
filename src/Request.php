@@ -98,7 +98,7 @@ class Request
     public static function createFromGlobals()
     {
         $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER, null, $_SESSION);
-        if ( 0 === strpos($request->headers->get( 'CONTENT_TYPE' ), 'application/x-www-form-urlencoded')
+        if ( !empty( $request->headers->get( 'CONTENT_TYPE' ) ) && 0 === strpos($request->headers->get( 'CONTENT_TYPE' ), 'application/x-www-form-urlencoded')
             && \in_array( strtoupper( $request->server->get( 'REQUEST_METHOD', 'GET' ) ), ['PUT', 'DELETE', 'PATCH'])
         ) {
             parse_str( $request->getContent(), $data );

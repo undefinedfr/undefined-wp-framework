@@ -79,7 +79,7 @@ class Mail
             'blogname'          => get_bloginfo( 'blogname' ),
             'home_url'          => site_url(),
             'stylesheet_uri'    => get_stylesheet_directory_uri(),
-            'blog_name'         => get_bloginfo( 'name' ),
+            'blogdescription'   => get_bloginfo( 'blogdescription' ),
         ];
     }
 
