@@ -85,7 +85,7 @@ class Request
         $this->attributes               = new Request\ParameterBag( $attributes );
         $this->cookies                  = new Request\ParameterBag( $cookies );
         $this->server                   = new Request\ServerBag( $server );
-        $this->session                  = new Request\ServerBag( $session );
+        $this->session                  = new Request\ServerBag( $session ?? [] );
         $this->headers                  = new Request\HeaderBag( $this->server->getHeaders() );
         $this->content                  = $content;
     }
@@ -97,7 +97,7 @@ class Request
      */
     public static function createFromGlobals()
     {
-        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER, null, $_SESSION);
+        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER, null, ( $_SESSION ?? [] ));
         if ( !empty( $request->headers->get( 'CONTENT_TYPE' ) ) && 0 === strpos($request->headers->get( 'CONTENT_TYPE' ), 'application/x-www-form-urlencoded')
             && \in_array( strtoupper( $request->server->get( 'REQUEST_METHOD', 'GET' ) ), ['PUT', 'DELETE', 'PATCH'])
         ) {
@@ -446,7 +446,7 @@ class Request
         $server[ 'REQUEST_URI' ]    = $components['path'].( '' !== $queryString ? '?' . $queryString : '' );
         $server[ 'QUERY_STRING' ]   = $queryString;
 
-        return self::createRequestFromFactory( $query, $request, [], $cookies, $files, $server, $content, $_SESSION );
+        return self::createRequestFromFactory( $query, $request, [], $cookies, $files, $server, $content, ( $_SESSION ?? [] ) );
     }
 
     /**
