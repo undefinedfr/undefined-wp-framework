@@ -59,7 +59,7 @@ class Request
     /**
      * @return void
      */
-    public function __construct( array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null, $session = [] )
+    public function __construct( array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null, array $session = [] )
     {
         $this->initialize( $query, $request, $attributes, $cookies, $files, $server, $content, $session );
     }
@@ -78,14 +78,14 @@ class Request
      * @param string|resource|null $content    The raw body data
      * @param array                $server     The SESSION parameters
      */
-    public function initialize( array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null, $session = [] )
+    public function initialize( array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null, array $session = [] )
     {
         $this->request                  = new Request\ParameterBag( $request );
         $this->query                    = new Request\ParameterBag( $query );
         $this->attributes               = new Request\ParameterBag( $attributes );
         $this->cookies                  = new Request\ParameterBag( $cookies );
         $this->server                   = new Request\ServerBag( $server );
-        $this->session                  = new Request\ServerBag( $session ?? [] );
+        $this->session                  = new Request\ServerBag( $session );
         $this->headers                  = new Request\HeaderBag( $this->server->getHeaders() );
         $this->content                  = $content;
     }
@@ -97,9 +97,9 @@ class Request
      */
     public static function createFromGlobals()
     {
-        $request = self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER, null, ( $_SESSION ?? [] ));
-        if ( !empty( $request->headers->get( 'CONTENT_TYPE' ) ) && 0 === strpos($request->headers->get( 'CONTENT_TYPE' ), 'application/x-www-form-urlencoded')
-            && \in_array( strtoupper( $request->server->get( 'REQUEST_METHOD', 'GET' ) ), ['PUT', 'DELETE', 'PATCH'])
+        $request = self::createRequestFromFactory( $_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER, null, $_SESSION ?: [] );
+        if ( !empty( $request->headers->get( 'CONTENT_TYPE' ) ) && 0 === strpos( $request->headers->get( 'CONTENT_TYPE' ), 'application/x-www-form-urlencoded' )
+            && \in_array( strtoupper( $request->server->get( 'REQUEST_METHOD', 'GET' ) ), ['PUT', 'DELETE', 'PATCH'] )
         ) {
             parse_str( $request->getContent(), $data );
             $request->request = new Request\ParameterBag( $data );
@@ -446,7 +446,7 @@ class Request
         $server[ 'REQUEST_URI' ]    = $components['path'].( '' !== $queryString ? '?' . $queryString : '' );
         $server[ 'QUERY_STRING' ]   = $queryString;
 
-        return self::createRequestFromFactory( $query, $request, [], $cookies, $files, $server, $content, ( $_SESSION ?? [] ) );
+        return self::createRequestFromFactory( $query, $request, [], $cookies, $files, $server, $content, $_SESSION );
     }
 
     /**
