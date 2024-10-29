@@ -1,6 +1,7 @@
 <?php
 namespace Undefined\Core\Block;
 
+use Extended\ACF\Location;
 use Timber;
 
 /**
@@ -85,14 +86,11 @@ class Block
         }
 
         // Create ACF group field if exists
-        if( method_exists( $this, '_setGroupField' ) ) {
-            $this->_setGroupField();
+        $this->_setGroupField();
 
-            if( is_array( $this->groupField ) ) {
-                add_action('acf/init', [$this, 'registerGroupField'] );
-            }
+        if( !empty( $this->groupField['fields'] ) ) {
+            add_action('acf/init', [$this, 'registerGroupField'] );
         }
-
 
         add_action( 'init', [$this, 'registerBlock'] );
         add_action( 'enqueue_block_editor_assets', [$this, 'loadAssets'] );
@@ -145,6 +143,51 @@ class Block
     }
 
     /**
+     * Load assets with block
+     *
+     * @return void
+     */
+    public function loadAssets()
+    {
+        $stylesheet = '/assets/admin/css/gutenberg/' . $this->name . '.css';
+        if ( file_exists( get_template_directory() . $stylesheet ) ) {
+            wp_enqueue_style( $this->name, get_template_directory_uri() . $stylesheet, $this->styleDependencies );
+        }
+
+        $script = '/assets/admin/js/gutenberg/' . $this->name . '.js';
+        if ( file_exists( get_template_directory() . $script ) ) {
+            wp_enqueue_script( $this->name, get_template_directory_uri() . $script, $this->scriptDependencies );
+        }
+    }
+
+    /**
+     * Register ACF Group Field
+     *
+     * @return void
+     */
+    public function registerGroupField()
+    {
+        register_extended_field_group( $this->groupField ?: [] );
+    }
+
+    /**
+     * Set ACF Group Field
+     * @return void
+     */
+    protected function _setGroupField()
+    {
+        if( empty( $this->groupField['title'] ) ) {
+            $this->groupField['title'] = $this->title;
+        }
+
+        if( empty( $this->groupField['location'] ) ) {
+            $this->groupField['location'] = [
+                Location::where( 'block', 'acf/' . $this->name )
+            ];
+        }
+    }
+
+    /**
      * On admin update, block data is send to template, not all block
      *
      * @param $block
@@ -182,38 +225,13 @@ class Block
      */
     protected function _render( $block )
     {
-        if( empty( array_filter( $block['data'] ) ) && is_admin() && file_exists( apply_filters( 'undfnd_gutenberg_bloc_empty_template', ( get_template_directory() . '/templates/layout/gutenberg-preview.twig' ), $block, $this ) ) ) {
+        if( empty( array_filter( $block['data'] ) )
+            && is_admin()
+            && file_exists( apply_filters( 'undfnd_gutenberg_bloc_empty_template', ( get_template_directory() . '/templates/layout/gutenberg-preview.twig' ), $block, $this ) ) ) {
+            
             Timber::render( 'layout/gutenberg-preview.twig', [ 'image' => $this->name ] );
         } else {
             Timber::render( $this->render_template, [ 'block' => $block ] );
         }
-    }
-
-    /**
-     * Load assets with block
-     *
-     * @return void
-     */
-    public function loadAssets()
-    {
-        $stylesheet = '/assets/admin/css/gutenberg/' . $this->name . '.css';
-        if ( file_exists( get_template_directory() . $stylesheet ) ) {
-            wp_enqueue_style( $this->name, get_template_directory_uri() . $stylesheet, $this->styleDependencies );
-        }
-
-        $script = '/assets/admin/js/gutenberg/' . $this->name . '.js';
-        if ( file_exists( get_template_directory() . $script ) ) {
-            wp_enqueue_script( $this->name, get_template_directory_uri() . $script, $this->scriptDependencies );
-        }
-    }
-
-    /**
-     * Register ACF Group Field
-     *
-     * @return void
-     */
-    public function registerGroupField()
-    {
-        register_extended_field_group( $this->groupField ?: [] );
     }
 }
