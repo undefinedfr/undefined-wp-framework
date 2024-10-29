@@ -5,7 +5,8 @@
   "description": "Mini Framework for Wordpress",
   "license": "GPL-3.0-or-later",
   "require": {
-    "timber/timber": "^2.0"
+    "timber/timber": "^2.0",
+    "vinkla/extended-acf": "^14.2"
   },
   "autoload" : {
     "files": [

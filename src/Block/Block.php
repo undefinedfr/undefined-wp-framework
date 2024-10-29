@@ -64,6 +64,11 @@ class Block
     public $scriptDependencies = [];
 
     /**
+     * @var string $groupField
+     */
+    public $groupField = [];
+
+    /**
      * Block constructor.
      *
      * @return void
@@ -74,9 +79,20 @@ class Block
 
         $iconPath = apply_filters( 'undfnd_gutenberg_bloc_icon_path', ( get_template_directory() . '/public/assets/images/icons/gutenberg-icons/' . $this->name . '.svg' ), $this );
 
+        // Load icon if exists
         if( file_exists( $iconPath ) ) {
             $this->icon = file_get_contents( $iconPath );
         }
+
+        // Create ACF group field if exists
+        if( method_exists( $this, '_setGroupField' ) ) {
+            $this->_setGroupField();
+
+            if( is_array( $this->groupField ) ) {
+                add_action('acf/init', [$this, 'registerGroupField'] );
+            }
+        }
+
 
         add_action( 'init', [$this, 'registerBlock'] );
         add_action( 'enqueue_block_editor_assets', [$this, 'loadAssets'] );
@@ -189,5 +205,15 @@ class Block
         if ( file_exists( get_template_directory() . $script ) ) {
             wp_enqueue_script( $this->name, get_template_directory_uri() . $script, $this->scriptDependencies );
         }
+    }
+
+    /**
+     * Register ACF Group Field
+     *
+     * @return void
+     */
+    public function registerGroupField()
+    {
+        register_extended_field_group( $this->groupField ?: [] );
     }
 }
