@@ -177,7 +177,7 @@ class Block
     protected function _setGroupField()
     {
         if( empty( $this->groupField['title'] ) ) {
-            $this->groupField['title'] = $this->title;
+            $this->groupField['title'] = '[Bloc] ' . $this->title;
         }
 
         if( empty( $this->groupField['location'] ) ) {
@@ -228,7 +228,7 @@ class Block
         if( empty( array_filter( $block['data'] ) )
             && is_admin()
             && file_exists( apply_filters( 'undfnd_gutenberg_bloc_empty_template', ( get_template_directory() . '/templates/layout/gutenberg-preview.twig' ), $block, $this ) ) ) {
-            
+
             Timber::render( 'layout/gutenberg-preview.twig', [ 'image' => $this->name ] );
         } else {
             Timber::render( $this->render_template, [ 'block' => $block ] );
