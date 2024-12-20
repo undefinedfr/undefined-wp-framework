@@ -37,7 +37,7 @@ class Block
     /**
      * @var string $category
      */
-    public $category = 'layout';
+    public $category = 'custom';
 
     /**
      * @var string $icon
@@ -225,7 +225,7 @@ class Block
      */
     protected function _render( $block )
     {
-        if( empty( array_filter( $block['data'] ) )
+        if( empty( array_filter( $block['data'], [$this, 'filterEmpty'], ARRAY_FILTER_USE_BOTH ) )
             && is_admin()
             && file_exists( apply_filters( 'undfnd_gutenberg_bloc_empty_template', ( get_template_directory() . '/templates/layout/gutenberg-preview.twig' ), $block, $this ) ) ) {
 
@@ -233,5 +233,17 @@ class Block
         } else {
             Timber::render( $this->render_template, [ 'block' => $block ] );
         }
+    }
+    
+    /**
+     * Filter empty content
+     *
+     * @param $value
+     * @param $key
+     * @return array|bool
+     */
+    private function filterEmpty( $value, $key )
+    {
+        return is_array( $value ) ? array_filter( $value, [$this, 'filterEmpty'], ARRAY_FILTER_USE_BOTH ) : ( !empty( $value ) && $key != 'hn' );
     }
 }

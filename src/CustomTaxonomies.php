@@ -41,8 +41,8 @@ class CustomTaxonomies
 
             call_user_func( [ $taxonomy, 'register' ] );
 
-            if(method_exists( $taxonomy, 'onSaveTerm')) {
-                add_action( 'saved_' . $taxonomy, function( $term_id, $tt_id, $update, $args ) use ( $taxonomy ) {
+            if( method_exists( $taxonomy, 'onSaveTerm') ) {
+                add_action( 'saved_' . $taxonomy::getTaxonomy(), function( $term_id, $tt_id, $update, $args ) use ( $taxonomy ) {
                     call_user_func( [ $taxonomy, 'onSaveTerm' ], $term_id, $tt_id, $update, $args );
                 }, 10, 4 );
             }
