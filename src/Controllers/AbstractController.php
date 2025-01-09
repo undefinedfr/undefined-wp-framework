@@ -333,16 +333,16 @@ class AbstractController
 
         // Custom post_type list
         if( is_archive() && !is_tax() && !is_category() && !is_author() ) {
-            $this->context['post_type'] = $this->_queriedObject->slug;
+            $this->context['post_type'] = $this->_queriedObject->name;
 
             // Is paged page
             if( is_paged() ){
                 $templates[] = 'archive-paged.twig';
-                $templates[] = 'archive-' . $this->_queriedObject->slug . '-paged.twig';
+                $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
             }
 
-            $templates[] = 'archive-' . $this->_queriedObject->slug . '.twig';
-            $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
+            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
+            $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
 

@@ -89,7 +89,7 @@ class Assets
                 wp_enqueue_script( $scripts['handle'], $this->_distPath . $assetHash, $scripts['deps'], $scripts['version'], !empty( $scripts['infooter'] ) );
 
                 if( !empty( $scripts['args'] ) ) {
-                    wp_localize_script( $scripts['handle'], 'args', $scripts['args'] );
+                    wp_localize_script( $scripts['handle'], apply_filters( 'undfnd_assets_' . $scripts['handle'] . '_object_name', 'args' ), $scripts['args'] );
                 }
             }
         }
