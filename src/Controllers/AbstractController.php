@@ -337,12 +337,12 @@ class AbstractController
 
             // Is paged page
             if( is_paged() ){
-                $templates[] = 'archive-paged.twig';
                 $templates[] = 'archive-' . $this->_queriedObject->name . '-paged.twig';
+                $templates[] = 'archive-paged.twig';
             }
 
-            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->name . '.twig';
+            $templates[] = 'archive-' . $this->_queriedObject->name . '.twig';
             $templates[] = 'archive.twig';
         }
 
@@ -355,14 +355,14 @@ class AbstractController
 
                 // Is paged page
                 if( is_paged() ) {
-                    $templates[] = 'category-paged.twig';
-                    $templates[] = 'category-' . $this->_queriedObject->slug . '-paged.twig';
                     $templates[] = 'category-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '-paged.twig';
+                    $templates[] = 'category-' . $this->_queriedObject->slug . '-paged.twig';
+                    $templates[] = 'category-paged.twig';
                 }
 
-                $templates[] = 'category-' . $this->_queriedObject->taxonomy . '.twig';
                 $templates[] = 'category-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '.twig';
                 $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
+                $templates[] = 'category-' . $this->_queriedObject->taxonomy . '.twig';
                 $templates[] = 'category.twig';
             }
 
@@ -373,9 +373,9 @@ class AbstractController
                 $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '-paged.twig';
             }
 
-            $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
             $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '-' . $this->_queriedObject->slug . '.twig';
             $templates[] = $template_name . '-' . $this->_queriedObject->slug . '.twig';
+            $templates[] = 'taxonomy-' . $this->_queriedObject->taxonomy . '.twig';
             $templates[] = 'taxonomy.twig';
         }
 
