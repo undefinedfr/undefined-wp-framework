@@ -174,7 +174,8 @@ class Block
         register_extended_field_group(
             apply_filters(
                 'undfnd_gutenberg_block_acf_group_fields',
-                $this->groupField ?: []
+                $this->groupField ?: [],
+                $this->name
             )
         );
     }
@@ -243,7 +244,7 @@ class Block
             Timber::render( $this->render_template, [ 'block' => $block ] );
         }
     }
-    
+
     /**
      * Filter empty content
      *
