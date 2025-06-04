@@ -173,7 +173,7 @@ class Block
     {
         register_extended_field_group(
             apply_filters(
-                'undfnd_gutenberg_bloc_acf_group_fields',
+                'undfnd_gutenberg_block_acf_group_fields',
                 $this->groupField ?: []
             )
         );
@@ -223,7 +223,7 @@ class Block
             }
         }
 
-        return $block;
+        return apply_filters( 'undfnd_gutenberg_prepared_block', $block );
     }
 
     /**
