@@ -136,7 +136,7 @@ class Assets
      */
     private function _getPathAssetHash( $asset )
     {
-        $map = get_stylesheet_directory() . '/public/assets/hash.json';
+        $map = apply_filters( 'undfnd_hash_assets_path', get_stylesheet_directory() . '/public/assets/hash.json' );
 
         $hash = file_exists( $map ) ? json_decode( file_get_contents( $map ), true ) : [];
 

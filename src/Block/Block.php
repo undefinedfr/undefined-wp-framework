@@ -107,6 +107,8 @@ class Block
 
             $this->render_template = apply_filters( 'undfnd_gutenberg_bloc_template' , ( get_template_directory() . '/templates/partial/block/' . $this->name . '.twig' ), $this->name );
 
+            $script = '/public/blocks/' . $this->name;
+
             acf_register_block( [
                 'name'            => $this->name,
                 'title'           => $this->title,
@@ -115,6 +117,8 @@ class Block
                 'render_callback' => [$this, 'render'],
                 'category'        => $this->category,
                 'icon'            => $this->icon,
+                'enqueue_script'  => file_exists( get_template_directory() . $script . '.js' ) ? get_template_directory_uri() . $script . '.js' : '',
+                'enqueue_style'   => file_exists( get_template_directory() . $script . '.css' ) ? get_template_directory_uri() . $script . '.css' : '',
                 'mode'            => $this->mode,
                 'keywords'        => array_merge( [$this->name], $this->keywords ),
                 'example'  => [
@@ -167,7 +171,12 @@ class Block
      */
     public function registerGroupField()
     {
-        register_extended_field_group( $this->groupField ?: [] );
+        register_extended_field_group(
+            apply_filters(
+                'undfnd_gutenberg_bloc_acf_group_fields',
+                $this->groupField ?: []
+            )
+        );
     }
 
     /**
