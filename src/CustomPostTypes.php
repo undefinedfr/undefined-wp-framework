@@ -51,15 +51,21 @@ class CustomPostTypes
                 return $classmap;
             } );
 
-            add_action( (class_exists('ACF') ? 'acf/' : '') . 'save_post', function( $post_id ) use ( $post_type ) {
-                if( empty( $post_type )
-                    || call_user_func( [ $post_type, 'getPostType' ]) != get_post_type($post_id)
-                    || !method_exists( $post_type, 'onSavePost') ) {
-                    return;
-                }
+            $ACFexist = class_exists( 'ACF' );
+            add_action(
+                ( $ACFexist ? 'acf/' : '' ) . 'save_post',
+                function( $post_id ) use ( $post_type ) {
+                    if( empty( $post_type )
+                        || call_user_func( [ $post_type, 'getPostType' ]) != get_post_type( $post_id )
+                        || !method_exists( $post_type, 'onSavePost') ) {
+                        return;
+                    }
 
-                call_user_func( [ $post_type, 'onSavePost' ], $post_id );
-            } );
+                    call_user_func( [ $post_type, 'onSavePost' ], $post_id );
+                },
+                apply_filters( 'undfnd_cpt_save_post_priority', 10, $post_type::getPostType() ),
+                apply_filters( 'undfnd_cpt_save_post_accepted_args', $ACFexist ? 1 : 3, $post_type::getPostType() )
+            );
         }
     }
 
