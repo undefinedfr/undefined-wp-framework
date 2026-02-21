@@ -2,6 +2,7 @@
 namespace Undefined\Core;
 
 require_once 'src/Functions.php';
+require_once 'src/helpers.php';
 
 spl_autoload_register( __NAMESPACE__ . '\\undfd_core_autoload' );
 function undfd_core_autoload( $class ) {

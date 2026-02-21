@@ -218,4 +218,102 @@ class ParameterBag
     {
         return count( $this->parameters );
     }
+
+    /**
+     * Returns sanitized email.
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized email
+     */
+    public function getEmail( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_email( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized text field.
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized text
+     */
+    public function getText( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_text_field( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized textarea field.
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized textarea
+     */
+    public function getTextarea( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_textarea_field( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized URL.
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized URL
+     */
+    public function getUrl( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? esc_url_raw( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized filename.
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized filename
+     */
+    public function getFilename( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_file_name( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized key (lowercase alphanumeric with dashes and underscores).
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized key
+     */
+    public function getKey( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_key( $value ) : $default;
+    }
+
+    /**
+     * Returns sanitized title (for use as slug).
+     *
+     * @param string $key     The parameter key
+     * @param string|null $default The default value if the parameter key does not exist
+     *
+     * @return string|null The sanitized title
+     */
+    public function getSlug( string $key, ?string $default = null ): ?string
+    {
+        $value = $this->get( $key, $default );
+        return $value ? sanitize_title( $value ) : $default;
+    }
 }

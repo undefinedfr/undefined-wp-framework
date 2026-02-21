@@ -6,7 +6,7 @@ namespace Undefined\Core;
  *
  * @name Templating
  * @since 1.0.0
- * @update 2.0.0
+ * @update 2.1.0
  * @package Undefined\Core
  */
 class Templating
@@ -16,8 +16,26 @@ class Templating
      */
     public function __construct()
     {
-        add_action( 'template_redirect', array(&$this, 'templateRedirect') );
-        add_filter( 'body_class', array(&$this, 'customBodyClasses') );
+        add_action('template_redirect', [$this, 'templateRedirect']);
+        add_filter('body_class', [$this, 'customBodyClasses']);
+        add_filter('timber/loader/loader', [$this, 'registerTwigNamespaces']);
+    }
+
+    /**
+     * Register custom Twig namespaces for Timber
+     *
+     * @param \Twig\Loader\FilesystemLoader $loader
+     * @return \Twig\Loader\FilesystemLoader
+     */
+    public function registerTwigNamespaces($loader)
+    {
+        // Add @blocks namespace for Timber-style blocks
+        $blocksPath = get_template_directory() . '/app/blocks';
+        if (is_dir($blocksPath)) {
+            $loader->addPath($blocksPath, 'blocks');
+        }
+
+        return $loader;
     }
 
     /**
