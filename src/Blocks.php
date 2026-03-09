@@ -90,13 +90,9 @@ class Blocks
         $className = ucwords($className);
         $className = str_replace(' ', '', $className);
 
-        // Convert kebab-case to lowercase without hyphens for namespace
-        $namespaceName = str_replace('-', '', strtolower($blockName));
-
         // Check common namespaces
         $namespaces = apply_filters('undfnd_block_namespaces', [
-            'App\\blocks\\' . $namespaceName . '\\',
-            'App\\blocks\\' . $blockName . '\\',
+            'App\\Blocks\\' . $className . '\\',
             'App\\Block\\',
             '',
         ]);
