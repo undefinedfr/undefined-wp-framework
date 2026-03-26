@@ -10,52 +10,55 @@ use Undefined\Core\Loaders\Loader;
  * @since 1.0.0
  * @package Undefined\Core
  */
-class CustomTaxonomies
-{
-    /**
-     * @var array
-     */
-    protected $_taxonomies = [];
+class CustomTaxonomies {
 
-    public function __construct()
-    {
-        $this->_taxonomies = new Loader();
-        $this->_taxonomies
-            ->setType( 'Taxonomy' )
-            ->setAll( get_template_directory() . '/app/Taxonomy/' );
+	/**
+	 * @var array
+	 */
+	protected $_taxonomies = [];
 
-        add_action( 'init', [ &$this, 'appCreateTaxonomies' ], 0 );
-    }
+	public function __construct() {
+		$this->_taxonomies = new Loader();
+		$this->_taxonomies
+			->setType( 'Taxonomy' )
+			->setAll( get_template_directory() . '/app/Taxonomy/' );
 
-    /**
-     * Launch register method on custom taxonomies
-     *
-     * @return void
-     */
-    public function appCreateTaxonomies()
-    {
-        foreach( $this->_taxonomies->getAll() as $taxonomy => $file ) {
-            if ( !class_exists( $taxonomy )
-                || !method_exists( $taxonomy, 'register' ) )
-                continue;
+		add_action( 'init', [ &$this, 'appCreateTaxonomies' ], 0 );
+	}
 
-            call_user_func( [ $taxonomy, 'register' ] );
+	/**
+	 * Launch register method on custom taxonomies
+	 *
+	 * @return void
+	 */
+	public function appCreateTaxonomies() {
+		foreach ( $this->_taxonomies->getAll() as $taxonomy => $file ) {
+			if ( ! class_exists( $taxonomy )
+				|| ! method_exists( $taxonomy, 'register' ) ) {
+				continue;
+			}
 
-            if( method_exists( $taxonomy, 'onSaveTerm') ) {
-                add_action( 'saved_' . $taxonomy::getTaxonomy(), function( $term_id, $tt_id, $update, $args ) use ( $taxonomy ) {
-                    call_user_func( [ $taxonomy, 'onSaveTerm' ], $term_id, $tt_id, $update, $args );
-                }, 10, 4 );
-            }
-        }
-    }
+			call_user_func( [ $taxonomy, 'register' ] );
 
-    /**
-     * Retrieve custom taxonomies
-     *
-     * @return array
-     */
-    public function getTaxonomies()
-    {
-        return $this->_taxonomies;
-    }
+			if ( method_exists( $taxonomy, 'onSaveTerm' ) ) {
+				add_action(
+					'saved_' . $taxonomy::getTaxonomy(),
+					function ( $term_id, $tt_id, $update, $args ) use ( $taxonomy ) {
+						call_user_func( [ $taxonomy, 'onSaveTerm' ], $term_id, $tt_id, $update, $args );
+					},
+					10,
+					4
+				);
+			}
+		}
+	}
+
+	/**
+	 * Retrieve custom taxonomies
+	 *
+	 * @return array
+	 */
+	public function getTaxonomies() {
+		return $this->_taxonomies;
+	}
 }

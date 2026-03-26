@@ -15,129 +15,127 @@ use Undefined\Core\Loaders\Loader;
  * @update 2.1.0
  * @package Undefined\Core
  */
-class Blocks
-{
-    /**
-     * @var Loader
-     */
-    protected $_blocks;
+class Blocks {
 
-    /**
-     * @var array Loaded block instances
-     */
-    protected $_loadedBlocks = [];
+	/**
+	 * @var Loader
+	 */
+	protected $_blocks;
 
-    /**
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->_blocks = new Loader();
+	/**
+	 * @var array Loaded block instances
+	 */
+	protected $_loadedBlocks = [];
 
-        // Load ACF custom blocks from app/Block/ (uppercase, singular - legacy)
-        $acfBlocksPath = apply_filters('undfnd_acf_blocks_path', get_template_directory() . '/app/Block/');
-        if (is_dir($acfBlocksPath)) {
-            $this->_blocks
-                ->setType('Block')
-                ->setAll($acfBlocksPath)
-                ->loadAll();
-        }
+	/**
+	 * @return void
+	 */
+	public function __construct() {
+		$this->_blocks = new Loader();
 
-        // Load Gutenberg blocks from app/blocks/ (lowercase, plural - Timber structure)
-        $gutenbergBlocksPath = apply_filters('undfnd_gutenberg_blocks_path', get_template_directory() . '/app/blocks/');
-        if (is_dir($gutenbergBlocksPath)) {
-            $this->loadTimberBlocks($gutenbergBlocksPath);
-        }
-    }
+		// Load ACF custom blocks from app/Block/ (uppercase, singular - legacy)
+		$acfBlocksPath = apply_filters( 'undfnd_acf_blocks_path', get_template_directory() . '/app/Block/' );
+		if ( is_dir( $acfBlocksPath ) ) {
+			$this->_blocks
+				->setType( 'Block' )
+				->setAll( $acfBlocksPath )
+				->loadAll();
+		}
 
-    /**
-     * Load blocks from Timber-style folder structure
-     *
-     * @param string $path
-     * @return void
-     */
-    protected function loadTimberBlocks(string $path): void
-    {
-        $directories = glob($path . '*', GLOB_ONLYDIR);
+		// Load Gutenberg blocks from app/blocks/ (lowercase, plural - Timber structure)
+		$gutenbergBlocksPath = apply_filters( 'undfnd_gutenberg_blocks_path', get_template_directory() . '/app/blocks/' );
+		if ( is_dir( $gutenbergBlocksPath ) ) {
+			$this->loadTimberBlocks( $gutenbergBlocksPath );
+		}
+	}
 
-        foreach ($directories as $dir) {
-            $blockName = basename($dir);
-            $blockFile = $dir . '/' . $blockName . '.php';
+	/**
+	 * Load blocks from Timber-style folder structure
+	 *
+	 * @param string $path
+	 * @return void
+	 */
+	protected function loadTimberBlocks( string $path ): void {
+		$directories = glob( $path . '*', GLOB_ONLYDIR );
 
-            if (file_exists($blockFile)) {
-                require_once $blockFile;
+		foreach ( $directories as $dir ) {
+			$blockName = basename( $dir );
+			$blockFile = $dir . '/' . $blockName . '.php';
 
-                // Try to instantiate the class
-                $className = $this->getBlockClassName($blockName);
+			if ( file_exists( $blockFile ) ) {
+				require_once $blockFile;
 
-                if (class_exists($className)) {
-                    $this->_loadedBlocks[$blockName] = new $className();
-                }
-            }
-        }
-    }
+				// Try to instantiate the class
+				$className = $this->getBlockClassName( $blockName );
 
-    /**
-     * Get the class name for a block
-     *
-     * @param string $blockName
-     * @return string
-     */
-    protected function getBlockClassName(string $blockName): string
-    {
-        // Convert kebab-case to PascalCase for class name
-        $className = str_replace('-', ' ', $blockName);
-        $className = ucwords($className);
-        $className = str_replace(' ', '', $className);
+				if ( class_exists( $className ) ) {
+					$this->_loadedBlocks[ $blockName ] = new $className();
+				}
+			}
+		}
+	}
 
-        // Check common namespaces
-        $namespaces = apply_filters('undfnd_block_namespaces', [
-            'App\\Blocks\\' . $className . '\\',
-            'App\\Block\\',
-            '',
-        ]);
+	/**
+	 * Get the class name for a block
+	 *
+	 * @param string $blockName
+	 * @return string
+	 */
+	protected function getBlockClassName( string $blockName ): string {
+		// Convert kebab-case to PascalCase for class name
+		$className = str_replace( '-', ' ', $blockName );
+		$className = ucwords( $className );
+		$className = str_replace( ' ', '', $className );
 
-        foreach ($namespaces as $namespace) {
-            $fullClassName = $namespace . $className;
-            if (class_exists($fullClassName)) {
-                return $fullClassName;
-            }
-        }
+		// Check common namespaces
+		$namespaces = apply_filters(
+			'undfnd_block_namespaces',
+			[
+				'App\\Blocks\\' . $className . '\\',
+				'App\\Block\\',
+				'',
+			]
+		);
 
-        return $className;
-    }
+		foreach ( $namespaces as $namespace ) {
+			$fullClassName = $namespace . $className;
+			if ( class_exists( $fullClassName ) ) {
+				return $fullClassName;
+			}
+		}
 
-    /**
-     * Retrieve all blocks (Loader instance)
-     *
-     * @return Loader
-     */
-    public function getBlocks()
-    {
-        return $this->_blocks;
-    }
+		return $className;
+	}
 
-    /**
-     * Get all loaded block instances
-     *
-     * @return array
-     */
-    public function getAll(): array
-    {
-        $blocks = [];
+	/**
+	 * Retrieve all blocks (Loader instance)
+	 *
+	 * @return Loader
+	 */
+	public function getBlocks() {
+		return $this->_blocks;
+	}
 
-        // Get blocks from Loader
-        if ($this->_blocks instanceof Loader) {
-            foreach ($this->_blocks->getAll() as $block) {
-                $blocks[] = $block;
-            }
-        }
+	/**
+	 * Get all loaded block instances
+	 *
+	 * @return array
+	 */
+	public function getAll(): array {
+		$blocks = [];
 
-        // Add Timber-loaded blocks
-        foreach ($this->_loadedBlocks as $block) {
-            $blocks[] = $block;
-        }
+		// Get blocks from Loader
+		if ( $this->_blocks instanceof Loader ) {
+			foreach ( $this->_blocks->getAll() as $block ) {
+				$blocks[] = $block;
+			}
+		}
 
-        return $blocks;
-    }
+		// Add Timber-loaded blocks
+		foreach ( $this->_loadedBlocks as $block ) {
+			$blocks[] = $block;
+		}
+
+		return $blocks;
+	}
 }

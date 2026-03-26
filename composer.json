@@ -29,5 +29,16 @@
       "homepage": "https://www.undefined.fr",
       "role": "Lead Developer"
     }
-  ]
+  ],
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.0",
+    "squizlabs/php_codesniffer": "^3.7",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
 }

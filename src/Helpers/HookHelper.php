@@ -8,47 +8,45 @@ namespace Undefined\Core\Helpers;
  * @since 1.0.3
  * @package Undefined\Core\Helpers
  */
-class HookHelper
-{
-    /**
-     * Set Filters list
-     *
-     * @param $class
-     * @param $hooks
-     */
-    protected function setFiltersList($class, $hooks)
-    {
-        foreach ($hooks as $functionName => $hook) {
-            if (empty($hook['remove_on_admin']) || !is_admin()) {
-                if (is_array($hook)) {
-                    $priority = $hook['priority'] ?? 10;
-                    $acceptedArgs = $hook['accepted_args'] ?? 1;
-                    add_filter($hook['hook'], [&$class, 'theme_' . $functionName], $priority, $acceptedArgs);
-                } else {
-                    add_filter($hook, [&$class, 'theme_' . $functionName]);
-                }
-            }
-        }
-    }
+class HookHelper {
 
-    /**
-     * Set Actions list
-     *
-     * @param $class
-     * @param $hooks
-     */
-    protected function setActionsList($class, $hooks)
-    {
-        foreach ($hooks as $functionName => $hook) {
-            if (empty($hook['remove_on_admin']) || !is_admin()) {
-                if (is_array($hook)) {
-                    $priority = $hook['priority'] ?? 10;
-                    $acceptedArgs = $hook['accepted_args'] ?? 1;
-                    add_action($hook['hook'], [&$class, 'theme_' . $functionName], $priority, $acceptedArgs);
-                } else {
-                    add_action($hook, [&$class, 'theme_' . $functionName]);
-                }
-            }
-        }
-    }
+	/**
+	 * Set Filters list
+	 *
+	 * @param $class
+	 * @param $hooks
+	 */
+	protected function setFiltersList( $class, $hooks ) {
+		foreach ( $hooks as $functionName => $hook ) {
+			if ( empty( $hook['remove_on_admin'] ) || ! is_admin() ) {
+				if ( is_array( $hook ) ) {
+					$priority     = $hook['priority'] ?? 10;
+					$acceptedArgs = $hook['accepted_args'] ?? 1;
+					add_filter( $hook['hook'], [ &$class, 'theme_' . $functionName ], $priority, $acceptedArgs );
+				} else {
+					add_filter( $hook, [ &$class, 'theme_' . $functionName ] );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set Actions list
+	 *
+	 * @param $class
+	 * @param $hooks
+	 */
+	protected function setActionsList( $class, $hooks ) {
+		foreach ( $hooks as $functionName => $hook ) {
+			if ( empty( $hook['remove_on_admin'] ) || ! is_admin() ) {
+				if ( is_array( $hook ) ) {
+					$priority     = $hook['priority'] ?? 10;
+					$acceptedArgs = $hook['accepted_args'] ?? 1;
+					add_action( $hook['hook'], [ &$class, 'theme_' . $functionName ], $priority, $acceptedArgs );
+				} else {
+					add_action( $hook, [ &$class, 'theme_' . $functionName ] );
+				}
+			}
+		}
+	}
 }

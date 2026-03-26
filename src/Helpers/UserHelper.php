@@ -8,47 +8,42 @@ namespace Undefined\Core\Helpers;
  * @since 1.0.0
  * @package Undefined\Core\Helpers
  */
-class UserHelper
-{
-    protected $_user;
+class UserHelper {
 
-    /**
-     * @return void
-     */
-    public function __construct( $user = false )
-    {
-        $this->_setUser( $user );
-    }
+	protected $_user;
 
-    /**
-     * Get current logged user
-     *
-     * @return mixed
-     */
-    public function getCurrentUser()
-    {
-        return $this->_user;
-    }
+	/**
+	 * @return void
+	 */
+	public function __construct( $user = false ) {
+		$this->_setUser( $user );
+	}
 
-    /**
-     * Retrieve user property
-     *
-     * @param $property
-     * @return null
-     */
-    public function get( $property )
-    {
-        return !empty( $this->_user->{ $property } ) ? $this->_user->{ $property } : null;
-    }
+	/**
+	 * Get current logged user
+	 *
+	 * @return mixed
+	 */
+	public function getCurrentUser() {
+		return $this->_user;
+	}
 
-    /**
-     * Set current user
-     *
-     * @param bool $user
-     */
-    protected function _setUser( $user = false )
-    {
-        $this->_user = !empty( $user ) && $user instanceof \WP_User ? $user : wp_get_current_user();
-    }
+	/**
+	 * Retrieve user property
+	 *
+	 * @param $property
+	 * @return null
+	 */
+	public function get( $property ) {
+		return ! empty( $this->_user->{ $property } ) ? $this->_user->{ $property } : null;
+	}
+
+	/**
+	 * Set current user
+	 *
+	 * @param bool $user
+	 */
+	protected function _setUser( $user = false ) {
+		$this->_user = ! empty( $user ) && $user instanceof \WP_User ? $user : wp_get_current_user();
+	}
 }
-

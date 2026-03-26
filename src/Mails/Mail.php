@@ -10,355 +10,338 @@ namespace Undefined\Core\Mails;
  * @package Undefined\Core\Mails
  */
 
-class Mail
-{
-    /**
-     * @var array
-     */
-    private $to 			    = [];
+class Mail {
 
-    /**
-     * @var array
-     */
-    private $cc 			    = [];
+	/**
+	 * @var array
+	 */
+	private $to = [];
 
-    /**
-     * @var array
-     */
-    private $bcc 			    = [];
+	/**
+	 * @var array
+	 */
+	private $cc = [];
 
-    /**
-     * @var array
-     */
-    private $headers 		    = [];
+	/**
+	 * @var array
+	 */
+	private $bcc = [];
 
-    /**
-     * @var array
-     */
-    private $attachments 	    = [];
+	/**
+	 * @var array
+	 */
+	private $headers = [];
 
-    /**
-     * @var bool
-     */
-    private $sendAsHTML 	    = true;
+	/**
+	 * @var array
+	 */
+	private $attachments = [];
 
-    /**
-     * @var string
-     */
-    private $subject 		    = '';
+	/**
+	 * @var bool
+	 */
+	private $sendAsHTML = true;
 
-    /**
-     * @var string
-     */
-    private $from 			    = '';
+	/**
+	 * @var string
+	 */
+	private $subject = '';
 
-    /**
-     * @var bool
-     */
-    private $template 		    = false;
+	/**
+	 * @var string
+	 */
+	private $from = '';
 
-    /**
-     * @var array
-     */
-    private $variables 		    = [];
+	/**
+	 * @var bool
+	 */
+	private $template = false;
 
-    /**
-     * @return Mail
-     */
-    public static function init()
-    {
-        return new self;
-    }
+	/**
+	 * @var array
+	 */
+	private $variables = [];
 
-    /**
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->variables  = [
-            'blogname'          => get_bloginfo( 'blogname' ),
-            'home_url'          => site_url(),
-            'stylesheet_uri'    => get_stylesheet_directory_uri(),
-            'blogdescription'   => get_bloginfo( 'blogdescription' ),
-        ];
-    }
+	/**
+	 * @return Mail
+	 */
+	public static function init() {
+		return new self();
+	}
 
-    /**
-     * Set recipients
-     *
-     * @param  array|String $to
-     * @return Object $this
-     */
-    public function to( $to )
-    {
-        $this->to = is_array( $to ) ? $to : [ $to ];
+	/**
+	 * @return void
+	 */
+	public function __construct() {
+		$this->variables = [
+			'blogname'        => get_bloginfo( 'blogname' ),
+			'home_url'        => site_url(),
+			'stylesheet_uri'  => get_stylesheet_directory_uri(),
+			'blogdescription' => get_bloginfo( 'blogdescription' ),
+		];
+	}
 
-        return $this;
-    }
+	/**
+	 * Set recipients
+	 *
+	 * @param  array|String $to
+	 * @return Object $this
+	 */
+	public function to( $to ) {
+		$this->to = is_array( $to ) ? $to : [ $to ];
 
-    /**
-     * Get recipients
-     *
-     * @return array $to
-     */
-    public function getTo()
-    {
-        return $this->to;
-    }
+		return $this;
+	}
 
-    /**
-     * Set Cc recipients
-     *
-     * @param  String|array $cc
-     * @return Object $this
-     */
-    public function cc( $cc )
-    {
-        $this->cc = is_array( $cc ) ? $cc : [ $cc ];
+	/**
+	 * Get recipients
+	 *
+	 * @return array $to
+	 */
+	public function getTo() {
+		return $this->to;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set Cc recipients
+	 *
+	 * @param  String|array $cc
+	 * @return Object $this
+	 */
+	public function cc( $cc ) {
+		$this->cc = is_array( $cc ) ? $cc : [ $cc ];
 
-    /**
-     * Get Cc recipients
-     *
-     * @return array $cc
-     */
-    public function getCc()
-    {
-        return $this->cc;
-    }
+		return $this;
+	}
 
-    /**
-     * Set Email Bcc recipients
-     *
-     * @param  String|array $bcc
-     * @return Object $this
-     */
-    public function bcc( $bcc )
-    {
-        $this->bcc = is_array( $bcc ) ? $bcc : [ $bcc ];
+	/**
+	 * Get Cc recipients
+	 *
+	 * @return array $cc
+	 */
+	public function getCc() {
+		return $this->cc;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set Email Bcc recipients
+	 *
+	 * @param  String|array $bcc
+	 * @return Object $this
+	 */
+	public function bcc( $bcc ) {
+		$this->bcc = is_array( $bcc ) ? $bcc : [ $bcc ];
 
-    /**
-     * Set email Bcc recipients
-     *
-     * @return array $bcc
-     */
-    public function getBcc()
-    {
-        return $this->bcc;
-    }
+		return $this;
+	}
 
-    /**
-     * Set email Subject
-     *
-     * @param  string $subject
-     * @return Object $this
-     */
-    public function subject( $subject )
-    {
-        $this->subject = $subject;
+	/**
+	 * Set email Bcc recipients
+	 *
+	 * @return array $bcc
+	 */
+	public function getBcc() {
+		return $this->bcc;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set email Subject
+	 *
+	 * @param  string $subject
+	 * @return Object $this
+	 */
+	public function subject( $subject ) {
+		$this->subject = $subject;
 
-    /**
-     * Retruns email subject
-     *
-     * @return array
-     */
-    public function getSubject()
-    {
-        return $this->subject;
-    }
+		return $this;
+	}
 
-    /**
-     * Set From header
-     *
-     * @param  String
-     * @return Object $this
-     */
-    public function from( $from )
-    {
-        $this->from = $from;
+	/**
+	 * Retruns email subject
+	 *
+	 * @return array
+	 */
+	public function getSubject() {
+		return $this->subject;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set From header
+	 *
+	 * @param  String
+	 * @return Object $this
+	 */
+	public function from( $from ) {
+		$this->from = $from;
 
-    /**
-     * Set the email's headers
-     *
-     * @param  String|array  $headers [description]
-     * @return Object $this
-     */
-    public function headers( $headers )
-    {
-        $this->headers = is_array( $headers ) ? $headers : [ $headers ];
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * Set the email's headers
+	 *
+	 * @param  String|array $headers [description]
+	 * @return Object $this
+	 */
+	public function headers( $headers ) {
+		$this->headers = is_array( $headers ) ? $headers : [ $headers ];
 
-    /**
-     * Retruns headers
-     *
-     * @return array
-     */
-    public function getHeaders()
-    {
-        return $this->headers;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns email content type
-     *
-     * @return String
-     */
-    public function HTMLFilter()
-    {
-        return 'text/html';
-    }
+	/**
+	 * Retruns headers
+	 *
+	 * @return array
+	 */
+	public function getHeaders() {
+		return $this->headers;
+	}
 
-    /**
-     * Set email content type
-     *
-     * @param  Bool $html
-     * @return Object $this
-     */
-    public function sendAsHTML( $html )
-    {
-        $this->sendAsHTML = $html;
+	/**
+	 * Returns email content type
+	 *
+	 * @return String
+	 */
+	public function HTMLFilter() {
+		return 'text/html';
+	}
 
-        return $this;
-    }
+	/**
+	 * Set email content type
+	 *
+	 * @param  Bool $html
+	 * @return Object $this
+	 */
+	public function sendAsHTML( $html ) {
+		$this->sendAsHTML = $html;
 
-    /**
-     * Attach a file or array of files.
-     * Filepaths must be absolute.
-     *
-     * @param  String|array $path
-     * @throws \Exception
-     * @return Object $this
-     */
-    public function attach( $path )
-    {
-        if( is_array( $path ) ) {
-            $this->attachments = [];
-            foreach( $path as $path_ ) {
-                if( !file_exists( $path_ ) ){
-                    throw new \Exception( "Attachment not found at $path" );
-                }else{
-                    $this->attachments[] = $path_;
-                }
-            }
-        } else {
-            if( !file_exists( $path ) ) {
-                throw new \Exception("Attachment not found at $path");
-            }
-            $this->attachments = [$path];
-        }
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * Attach a file or array of files.
+	 * Filepaths must be absolute.
+	 *
+	 * @param  String|array $path
+	 * @throws \Exception
+	 * @return Object $this
+	 */
+	public function attach( $path ) {
+		if ( is_array( $path ) ) {
+			$this->attachments = [];
+			foreach ( $path as $path_ ) {
+				if ( ! file_exists( $path_ ) ) {
+					throw new \Exception( "Attachment not found at $path" );
+				} else {
+					$this->attachments[] = $path_;
+				}
+			}
+		} else {
+			if ( ! file_exists( $path ) ) {
+				throw new \Exception( "Attachment not found at $path" );
+			}
+			$this->attachments = [ $path ];
+		}
 
-    /**
-     * Set the template file
-     * @param  String $template  Path to HTML template
-     * @param  array  $variables
-     * @throws \Exception
-     * @return Object $this
-     */
-    public function template( $template, $variables = [] )
-    {
-        if( is_array( $variables ) ) {
-            $this->variables = array_merge( $this->variables, $variables );
-        }
+		return $this;
+	}
 
-        $this->template = $template;
+	/**
+	 * Set the template file
+	 *
+	 * @param  String $template  Path to HTML template
+	 * @param  array  $variables
+	 * @throws \Exception
+	 * @return Object $this
+	 */
+	public function template( $template, $variables = [] ) {
+		if ( is_array( $variables ) ) {
+			$this->variables = array_merge( $this->variables, $variables );
+		}
 
-        return $this;
-    }
+		$this->template = $template;
 
-    /**
-     * Renders the template
-     * @return String
-     */
-    public function render()
-    {
-        $variables = $this->variables;
-        foreach ( $variables as $key => &$variable ) {
-            if( strpos( $key, '_html_' ) === false )
-                $variable = esc_html( $variable );
-        }
-        return \Timber::compile( $this->template, $this->variables );
-    }
+		return $this;
+	}
 
-    public function buildSubject()
-    {
-        return $this->parseAsMustache(
-            $this->subject,
-            $this->variables
-        );
-    }
+	/**
+	 * Renders the template
+	 *
+	 * @return String
+	 */
+	public function render() {
+		$variables = $this->variables;
+		foreach ( $variables as $key => &$variable ) {
+			if ( strpos( $key, '_html_' ) === false ) {
+				$variable = esc_html( $variable );
+			}
+		}
+		return \Timber::compile( $this->template, $this->variables );
+	}
 
-    public function parseAsMustache( $string, $variables = [] )
-    {
-        preg_match_all( '/\{\{\s*.+?\s*\}\}/', $string, $matches );
-        foreach( $matches[0] as $match ){
-            $var = str_replace( '{', '', str_replace( '}', '', preg_replace( '/\s+/', '', $match ) ) );
+	public function buildSubject() {
+		return $this->parseAsMustache(
+			$this->subject,
+			$this->variables
+		);
+	}
 
-            if( isset( $variables[$var] ) && !is_array( $variables[$var] ) ){
-                $string = str_replace( $match, $variables[$var], $string );
-            }
-        }
+	public function parseAsMustache( $string, $variables = [] ) {
+		preg_match_all( '/\{\{\s*.+?\s*\}\}/', $string, $matches );
+		foreach ( $matches[0] as $match ) {
+			$var = str_replace( '{', '', str_replace( '}', '', preg_replace( '/\s+/', '', $match ) ) );
 
-        return $string;
-    }
+			if ( isset( $variables[ $var ] ) && ! is_array( $variables[ $var ] ) ) {
+				$string = str_replace( $match, $variables[ $var ], $string );
+			}
+		}
 
-    /**
-     * Builds Email Headers
-     * @return String email headers
-     */
-    public function buildHeaders()
-    {
-        $headers = '';
-        $headers .= implode( "\r\n", $this->headers ) ."\r\n";
+		return $string;
+	}
 
-        foreach( $this->bcc as $bcc ) {
-            $headers .= sprintf( "Bcc: %s \r\n", $bcc );
-        }
+	/**
+	 * Builds Email Headers
+	 *
+	 * @return String email headers
+	 */
+	public function buildHeaders() {
+		$headers  = '';
+		$headers .= implode( "\r\n", $this->headers ) . "\r\n";
 
-        foreach( $this->cc as $cc ) {
-            $headers .= sprintf( "Cc: %s \r\n", $cc );
-        }
+		foreach ( $this->bcc as $bcc ) {
+			$headers .= sprintf( "Bcc: %s \r\n", $bcc );
+		}
 
-        if( !empty($this->from ) ) {
-            $headers .= sprintf( "From: %s \r\n", $this->from );
-        }
+		foreach ( $this->cc as $cc ) {
+			$headers .= sprintf( "Cc: %s \r\n", $cc );
+		}
 
-        return $headers;
-    }
+		if ( ! empty( $this->from ) ) {
+			$headers .= sprintf( "From: %s \r\n", $this->from );
+		}
 
-    /**
-     * Sends a rendered email using
-     * WordPress's wp_mail() function
-     * @return Bool
-     */
-    public function send()
-    {
-        if( count( $this->to ) === 0 ) {
-            throw new \Exception( 'You must set at least 1 recipient' );
-        }
-        if( empty( $this->template ) ) {
-            throw new \Exception( 'You must set a template' );
-        }
+		return $headers;
+	}
 
-        if( $this->sendAsHTML  ){
-            add_filter( 'wp_mail_content_type', [$this, 'HTMLFilter'] );
-        }
+	/**
+	 * Sends a rendered email using
+	 * WordPress's wp_mail() function
+	 *
+	 * @return Bool
+	 */
+	public function send() {
+		if ( count( $this->to ) === 0 ) {
+			throw new \Exception( 'You must set at least 1 recipient' );
+		}
+		if ( empty( $this->template ) ) {
+			throw new \Exception( 'You must set a template' );
+		}
 
-        return wp_mail( $this->to, $this->buildSubject(), $this->render(), $this->buildHeaders(), $this->attachments );
-    }
+		if ( $this->sendAsHTML ) {
+			add_filter( 'wp_mail_content_type', [ $this, 'HTMLFilter' ] );
+		}
+
+		return wp_mail( $this->to, $this->buildSubject(), $this->render(), $this->buildHeaders(), $this->attachments );
+	}
 }

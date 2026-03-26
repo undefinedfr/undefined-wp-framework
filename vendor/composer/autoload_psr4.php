@@ -11,5 +11,6 @@ return array(
     'Timber\\' => array($vendorDir . '/timber/timber/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
+    'PHPCSStandards\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => array($vendorDir . '/dealerdirect/phpcodesniffer-composer-installer/src'),
     'Extended\\ACF\\' => array($vendorDir . '/vinkla/extended-acf/src'),
 );
