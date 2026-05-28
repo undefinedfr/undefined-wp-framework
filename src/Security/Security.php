@@ -25,12 +25,14 @@ class Security {
 	 * @return mixed
 	 */
 	public function remove_users_rest_route( $endpoints ) {
-		if ( isset( $endpoints['/wp/v2/users'] ) ) {
-			unset( $endpoints['/wp/v2/users'] );
-		}
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			if ( isset( $endpoints['/wp/v2/users'] ) ) {
+				unset( $endpoints['/wp/v2/users'] );
+			}
 
-		if ( isset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] ) ) {
-			unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
+			if ( isset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] ) ) {
+				unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
+			}
 		}
 
 		return $endpoints;
