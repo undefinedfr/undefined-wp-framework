@@ -84,7 +84,7 @@ class Taxonomy extends TimberTerm {
 				],
 				'show_ui'           => $config['show_ui'],
 				'show_admin_column' => $config['show_admin_column'],
-				'show_in_rest'      => $config['hierarchical'],
+				'show_in_rest'      => $config['show_in_rest'],
 				'query_var'         => $config['query_var'],
 				'rewrite'           => $config['rewrite'],
 			]
